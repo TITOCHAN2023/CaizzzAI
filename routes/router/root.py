@@ -41,7 +41,11 @@ def login(request: LoginRequest):
     token = encode_token(uid=user.uid, level=int(user.is_admin))
     with session() as conn:
         api_key=conn.query(ApiKeySchema).filter(ApiKeySchema.uid==user.uid).first()
-        api_key.api_key_secret=token 
+        if not api_key:
+            api_key = ApiKeySchema(uid=user.uid, api_key_secret=token)
+            conn.add(api_key)
+        else:
+            api_key.api_key_secret = token
         conn.commit()
 
     logger.info(token)

@@ -2,6 +2,9 @@ from typing import List, Literal
 
 from pydantic import BaseModel
 
+class CreateSessionRequest(BaseModel):
+    sessionname: str
+    
 
 class RegisterRequest(BaseModel):
     username: str

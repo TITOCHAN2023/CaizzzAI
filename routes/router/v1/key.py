@@ -4,7 +4,6 @@ from typing import Tuple
 from fastapi import APIRouter, Depends
 from sqlalchemy import or_
 
-from middleware.mysql import session
 from ...model.response import StandardResponse
 from ...auth.oauth import jwt_auth
 from logger import logger

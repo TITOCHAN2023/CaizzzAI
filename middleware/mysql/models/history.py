@@ -4,7 +4,7 @@ from .session import SessionSchema
 from datetime import datetime
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
 
-class history(BaseSchema):
+class historySchema(BaseSchema):
     __tablename__ = "history"
     hid: int = Column(Integer, primary_key=True, autoincrement=True)
     sid: int = Column(Integer, ForeignKey(SessionSchema.sid, ondelete="CASCADE"), nullable=False)
