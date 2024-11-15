@@ -4,7 +4,7 @@ from langchain_openai.chat_models import ChatOpenAI
 from logger import logger
 
 
-def init_llm(llm_name: str, base_url: str, api_key: str, **kwargs) -> ChatOpenAI:
+def init_llm(llm_name: str, base_url: str, api_key: str, temperature:str,**kwargs) -> ChatOpenAI:
     """Init LLM."""
 
     kwargs.update({"verbose": True, "streaming": True})
@@ -13,6 +13,7 @@ def init_llm(llm_name: str, base_url: str, api_key: str, **kwargs) -> ChatOpenAI
         model=llm_name,
         openai_api_base=base_url,
         openai_api_key=api_key,
+        temperature=temperature,
         **kwargs,
     )
     

@@ -58,7 +58,9 @@ class UploadUrlsRequest(BaseModel):
 
 
 class ChatRequest(BaseModel):
-    llm_name: str
-    temperature: float
+    llm_model: str ="gpt-4o-mini"
+    temperature: float = 0.5
+    api_key: str
+    base_url: str
     message: str
     vector_db_id: int | None = None
