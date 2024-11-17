@@ -17,7 +17,8 @@ from middleware.redis import r
 from langchain_caizzz.llm import init_llm
 from langchain_caizzz.chain import caizzzchat
 from langchain_caizzz.memory import init_memory
-from langchain.memory import ConversationBufferWindowMemory
+
+
 session_router = APIRouter(prefix="/session", tags=["session"])
 
 
