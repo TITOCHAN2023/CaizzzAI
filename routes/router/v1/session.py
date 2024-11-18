@@ -1,8 +1,12 @@
 from datetime import datetime
 from typing import Any, AsyncGenerator, Callable, Dict, Tuple
 from logger import logger
+import json
 
+from fastapi.responses import StreamingResponse
+from fastapi.encoders import jsonable_encoder
 from fastapi import APIRouter, Depends, HTTPException, Request
+
 from sqlalchemy import or_
 
 from middleware.mysql.models.history import historySchema
@@ -13,6 +17,8 @@ from routes.model.request import CreateSessionRequest,ChatRequest
 from routes.model.response import StandardResponse
 from ...auth.oauth import jwt_auth
 from middleware.redis import r
+
+from langchain_core.prompts import MessagesPlaceholder, ChatPromptTemplate
 
 from langchain_caizzz.llm import init_llm
 from langchain_caizzz.chain import caizzzchat
@@ -194,11 +200,9 @@ async def get_session(sessionname: str, info: Tuple[int, int] = Depends(jwt_auth
 
 
 
-
-
 '''post user message'''
 @session_router.post("/{sessionname}/chat", response_model=StandardResponse, dependencies=[Depends(jwt_auth)])
-async def post_user_message(sessionname: str, req : ChatRequest, request:Request,info: Tuple[int, int] = Depends(jwt_auth)) -> StandardResponse:
+async def post_user_message(sessionname: str, req : ChatRequest, request:Request,info: Tuple[int, int] = Depends(jwt_auth)) -> StreamingResponse:
     uid,_=info
     logger.info(f"uid:{uid},sessionname:{sessionname},message:{req}")
 
@@ -220,21 +224,73 @@ async def post_user_message(sessionname: str, req : ChatRequest, request:Request
         result = query.first()
         session_id = result.sid
 
-        botmessage = caizzzchat(llm,str(uid)+sessionname,uid,req.message,req.vector_db_id)
+    async def generate():
+        botmessage = ""
+        # 使用 caizzzchat 的流式输出 botmessage = caizzzchat(llm,str(uid)+sessionname,uid,req.message,req.vector_db_id)
 
-        history = historySchema(
-            sid=session_id,
-            usermessage=req.message,
-            botmessage=botmessage,
-            ip=client_ip,
-            llm_model=req.llm_model,
-            user_api_key=req.api_key,
-            user_base_url=req.base_url
-        )
-        conn.add(history)
-        conn.commit()
+        memory = init_memory(str(uid)+sessionname)
+        prompt = ChatPromptTemplate.from_messages([
+            MessagesPlaceholder(variable_name=str(uid)+sessionname),
+            ("human", "{input}"),
+        ])
+        
+        memory_variables = memory.load_memory_variables({})
+        prompt_with_memory = prompt.partial(**memory_variables)
+        chain = prompt_with_memory | llm
 
-    return StandardResponse(code=0, status="success", data={"botmessage": botmessage})
+        try:
+            for chunk in chain.stream({"input": req.message}):
+                content = chunk.content
+                botmessage += content
+                # 将每个chunk转换为JSON并发送
+                yield f"data: {json.dumps({'content': content})}\n\n"
+
+            # 在完成流式传输后保存历史记录
+            with session() as conn:
+                history = historySchema(
+                    sid=session_id,
+                    usermessage=req.message,
+                    botmessage=botmessage,
+                    ip=client_ip,
+                    llm_model=req.llm_model,
+                    user_api_key=req.api_key,
+                    user_base_url=req.base_url
+                )
+                conn.add(history)
+                conn.commit()
+                
+            # 发送结束标记
+            yield f"data: [DONE]\n\n"
+            
+        except Exception as e:
+            logger.error(f"Error in stream: {str(e)}")
+            yield f"data: {json.dumps({'error': str(e)})}\n\n"
+            
+    return StreamingResponse(
+        generate(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no"
+        }
+    )
+
+    #     botmessage = caizzzchat(llm,str(uid)+sessionname,uid,req.message,req.vector_db_id)
+
+    #     history = historySchema(
+    #         sid=session_id,
+    #         usermessage=req.message,
+    #         botmessage=botmessage,
+    #         ip=client_ip,
+    #         llm_model=req.llm_model,
+    #         user_api_key=req.api_key,
+    #         user_base_url=req.base_url
+    #     )
+    #     conn.add(history)
+    #     conn.commit()
+
+    # return StandardResponse(code=0, status="success", data={"botmessage": botmessage})
 
 
 

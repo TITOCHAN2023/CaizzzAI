@@ -49,7 +49,7 @@ def login(request: LoginRequest):
         conn.commit()
 
     logger.info(token)
-    return {"token": token}
+    return {"token": "Bearer "+token}
 
 
 @root_router.post("/register")
