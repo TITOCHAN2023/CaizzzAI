@@ -11,8 +11,8 @@ def init_memory(memory_key: str) -> ConversationBufferWindowMemory:
     memory = ConversationBufferWindowMemory(memory_key=memory_key, return_messages=True, k=20)
     
     # 从 Redis 列表加载历史记录
-    input_messages = r.lrange(f"{memory_key}:input", 0, 20)
-    output_messages = r.lrange(f"{memory_key}:output", 0, 20)
+    input_messages = r.lrange(f"{memory_key}:input",0,-1)[::-1]
+    output_messages = r.lrange(f"{memory_key}:output",0,-1)[::-1]
     #logger.info(input_message)
     if input_messages and output_messages:
         for input_message, output_message in zip(input_messages, output_messages):

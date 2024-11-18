@@ -184,15 +184,15 @@ async def get_session(sessionname: str, info: Tuple[int, int] = Depends(jwt_auth
         }
 
 
-        
-        history_input = [usermessage for _, _, usermessage, _, _, _, _ in results]
-        history_output = [botmessage for _, _, _, botmessage, _, _, _ in results]
-        #logger.info(f"history_input:{history_input},history_output:{history_output}")
-        if history_input and history_output:
-            for human_message, ai_response in zip(history_input, history_output):
-                r.rpush(f"{uid}{sessionname}:input", human_message)
-                r.rpush(f"{uid}{sessionname}:output", ai_response)
-        
+        if not r.exists(f"{uid}{sessionname}:input"):
+            history_input = [usermessage for _, _, usermessage, _, _, _, _ in results[0:20]]
+            history_output = [botmessage for _, _, _, botmessage, _, _, _ in results[0:20]]
+            logger.info(f"history_input:{history_input},history_output:{history_output}")
+            if history_input and history_output:
+                for human_message, ai_response in zip(history_input, history_output):
+                    r.rpush(f"{uid}{sessionname}:input", human_message)
+                    r.rpush(f"{uid}{sessionname}:output", ai_response)
+            
 
 
     return StandardResponse(code=0, status="success", data=data)
@@ -259,7 +259,9 @@ async def post_user_message(sessionname: str, req : ChatRequest, request:Request
                 )
                 conn.add(history)
                 conn.commit()
-                
+                r.lpush(f"{uid}{sessionname}:input", req.message)
+                r.lpush(f"{uid}{sessionname}:output", botmessage)
+                #print( r.lrange(f"{str(uid)+sessionname}:input",0,20))
             # 发送结束标记
             yield f"data: [DONE]\n\n"
             
