@@ -187,6 +187,7 @@ async def get_session(sessionname: str, info: Tuple[int, int] = Depends(jwt_auth
         
         history_input = [usermessage for _, _, usermessage, _, _, _, _ in results]
         history_output = [botmessage for _, _, _, botmessage, _, _, _ in results]
+        #logger.info(f"history_input:{history_input},history_output:{history_output}")
         if history_input and history_output:
             for human_message, ai_response in zip(history_input, history_output):
                 r.rpush(f"{uid}{sessionname}:input", human_message)
