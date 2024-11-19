@@ -179,7 +179,7 @@ async def get_session(sessionname: str, info: Tuple[int, int] = Depends(jwt_auth
                     "user_api_key": user_api_key,
                     "user_base_url": user_base_url
                 }
-                for hid,create_at,usermessage,botmessage,llm_model,user_api_key,user_base_url in results
+                for hid,create_at,usermessage,botmessage,llm_model,user_api_key,user_base_url in results[::-1]
             ]
         }
 
