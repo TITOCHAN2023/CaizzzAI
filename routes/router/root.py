@@ -52,7 +52,7 @@ def login(request: LoginRequest):
     return {"token": "Bearer "+token}
 
 
-@root_router.post("/register")
+@root_router.post("/registerzzz")
 def register(request: RegisterRequest):
     with session() as conn:
         # 检查用户名是否已存在
