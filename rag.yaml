@@ -4,20 +4,20 @@ channels:
   - https://repo.anaconda.com/pkgs/main
   - https://repo.anaconda.com/pkgs/r
 dependencies:
-  - bzip2=1.0.8=h80987f9_6
-  - ca-certificates=2024.9.24=hca03da5_0
-  - libffi=3.4.4=hca03da5_1
-  - ncurses=6.4=h313beb8_0
-  - openssl=3.0.15=h80987f9_0
-  - pip=24.2=py311hca03da5_0
-  - python=3.11.10=hb885b13_0
-  - readline=8.2=h1a28f6b_0
-  - setuptools=75.1.0=py311hca03da5_0
-  - sqlite=3.45.3=h80987f9_0
-  - tk=8.6.14=h6ba3021_0
-  - wheel=0.44.0=py311hca03da5_0
-  - xz=5.4.6=h80987f9_1
-  - zlib=1.2.13=h18a0788_1
+  - bzip2=1.0.8
+  - ca-certificates=2024.9.24
+  - libffi=3.4.4
+  - ncurses=6.4
+  - openssl=3.0.15
+  - pip=24.2
+  - python=3.11.10
+  - readline=8.2
+  - setuptools=75.1.0
+  - sqlite=3.45.3
+  - tk=8.6.14
+  - wheel=0.44.0
+  - xz=5.4.6
+  - zlib=1.2.13
   - pip:
       - accelerate==1.1.1
       - aiofiles==23.2.1
@@ -234,8 +234,6 @@ dependencies:
       - toml==0.10.2
       - tomlkit==0.12.0
       - toolz==0.12.1
-      - torch==2.5.1
-      - torchvision==0.20.1
       - tornado==6.4
       - tqdm==4.66.2
       - traitlets==5.14.1

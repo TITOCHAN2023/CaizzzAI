@@ -10,13 +10,6 @@ LOG_ROOT= os.environ.get("LOGGER_ROOT", "./log")
 
 
 
-NEO4J_HOST = os.environ.get("NEO4J_HOST")
-NEO4J_PORT = int(os.environ.get("NEO4J_PORT", "7687"))
-NEO4J_PASSWORD = os.environ.get("NEO4J_PASSWORD")
-NEO4J_USERNAME = os.environ.get("NEO4J_USERNAME")
-
-
-
 MYSQL_DATABASE = os.environ.get("MYSQL_DATABASE")
 MYSQL_HOST = os.environ.get("MYSQL_HOST")
 MYSQL_PASSWORD = os.environ.get("MYSQL_PASSWORD")
@@ -56,7 +49,7 @@ REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD")
 
 
 JWT_TOKEN_SECRET = os.environ.get("JWT_TOKEN_SECRET")
-JWT_TOKEN_EXPIRE_TIME = eval(os.environ.get("JWT_TOKEN_EXPIRE_TIME", "3600"))
+JWT_TOKEN_EXPIRE_TIME = eval(os.environ.get("JWT_TOKEN_EXPIRE_TIME", "3600 * 24 * 30"))
 JWT_TOKEN_ALGORITHM = os.environ.get("JWT_TOKEN_ALGORITHM", "HS256")
 
 API_KEY_EXPIRE_TIME = eval(os.environ.get("API_KEY_EXPIRE_TIME", "3600 * 24 * 30"))

@@ -1,0 +1,13 @@
+uvicorn
+python-dotenv
+fastapi
+loguru
+langchain
+langchain-community
+langchain-openai
+redis
+werkzeug
+pymysql
+mysql-connector-python
+streamlit
+pyjwt
