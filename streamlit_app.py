@@ -3,9 +3,48 @@ import streamlit as st
 import requests
 import json
 
-st.title("CaizzzAI-未开放，仅测试阶段")
+
+# st.title("CaizzzAI-未开放，仅测试阶段")
 _ip="localhost"
 _port=8000
+ABOUT = """\
+### CaizzzAI is a project of providing private llm api and webui service
+#### Author: [Caizzz](https://titochan.top)
+#### Tech Stack
+##### LLM fine-tuning:
+- Transformers
+- PEFT
+- Pytorch
+- Deepspeed
+##### LLM deployment:
+- Openai-api
+- llama.cpp(in future)
+- llama-cpp-python(in future)
+##### LLM service:
+- Langchain
+- FAISS
+##### API backend:
+- Fastapi
+- Sqlalchemy
+- Mysql
+- Redis
+##### WebUI:
+- Streamlit
+"""
+st.set_page_config(
+        page_title="CaizzzAI-未开放，仅测试阶段",
+        page_icon="🤖",
+        layout= "centered",
+        initial_sidebar_state="expanded",
+        menu_items={
+            "Get Help": "https://github.com/TITOCHAN2023/CaizzzAI/README.md",
+            "Report a bug": "https://github.com/TITOCHAN2023/CaizzzAI/issues/new",
+            "About": ABOUT,
+        },
+    )
+st.title("CaizzzAI-未开放，仅测试阶段")
+
+
 def sidebar():
     st.sidebar.title("CaizzzAI")
 # 登录

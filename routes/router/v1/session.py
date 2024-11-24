@@ -208,7 +208,9 @@ async def post_user_message(sessionname: str, req : ChatRequest, request:Request
     logger.info(f"uid:{uid},sessionname:{sessionname},message:{req}")
 
     llm=init_llm(req.llm_model,req.base_url,req.api_key,req.temperature)
-    client_ip = request.client.host
+
+    client_ip  = request.client.host
+
     with session() as conn:
         if not conn.is_active:
             conn.rollback()
@@ -250,6 +252,7 @@ async def post_user_message(sessionname: str, req : ChatRequest, request:Request
             with session() as conn:
                 history = historySchema(
                     sid=session_id,
+                    create_at=datetime.now(),
                     usermessage=req.message,
                     botmessage=botmessage,
                     ip=client_ip,
