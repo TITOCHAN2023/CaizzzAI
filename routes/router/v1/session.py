@@ -18,11 +18,8 @@ from routes.model.response import StandardResponse
 from ...auth.oauth import jwt_auth
 from middleware.redis import r
 
-from langchain_core.prompts import MessagesPlaceholder, ChatPromptTemplate
-
 from langchain_caizzz.llm import init_llm
-from langchain_caizzz.chain import caizzzchat
-from langchain_caizzz.memory import init_memory
+from langchain_caizzz.chain import caizzzchain
 
 
 session_router = APIRouter(prefix="/session", tags=["session"])
@@ -207,7 +204,7 @@ async def post_user_message(sessionname: str, req : ChatRequest, request:Request
     uid,_=info
     logger.info(f"uid:{uid},sessionname:{sessionname},message:{req}")
 
-    llm=init_llm(req.llm_model,req.base_url,req.api_key,req.temperature)
+    
 
     client_ip  = request.client.host
 
@@ -229,17 +226,9 @@ async def post_user_message(sessionname: str, req : ChatRequest, request:Request
 
     async def generate():
         botmessage = ""
-        # 使用 caizzzchat 的流式输出 botmessage = caizzzchat(llm,str(uid)+sessionname,uid,req.message,req.vector_db_id)
 
-        memory = init_memory(str(uid)+sessionname)
-        prompt = ChatPromptTemplate.from_messages([
-            MessagesPlaceholder(variable_name=str(uid)+sessionname),
-            ("human", "{input}"),
-        ])
-        
-        memory_variables = memory.load_memory_variables({})
-        prompt_with_memory = prompt.partial(**memory_variables)
-        chain = prompt_with_memory | llm
+        llm=init_llm(req.llm_model,req.base_url,req.api_key,req.temperature)
+        chain=caizzzchain(llm,str(uid)+sessionname,req.vector_db_id)
 
         try:
             for chunk in chain.stream({"input": req.message}):
@@ -282,21 +271,6 @@ async def post_user_message(sessionname: str, req : ChatRequest, request:Request
         }
     )
 
-    #     botmessage = caizzzchat(llm,str(uid)+sessionname,uid,req.message,req.vector_db_id)
-
-    #     history = historySchema(
-    #         sid=session_id,
-    #         usermessage=req.message,
-    #         botmessage=botmessage,
-    #         ip=client_ip,
-    #         llm_model=req.llm_model,
-    #         user_api_key=req.api_key,
-    #         user_base_url=req.base_url
-    #     )
-    #     conn.add(history)
-    #     conn.commit()
-
-    # return StandardResponse(code=0, status="success", data={"botmessage": botmessage})
 
 
 

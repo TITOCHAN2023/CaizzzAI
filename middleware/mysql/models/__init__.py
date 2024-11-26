@@ -11,4 +11,6 @@ __all__ = [
     "ApiKeySchema",
     "SessionSchema",
     "historySchema",
+    #"VectorDBSchema",
+    
 ]

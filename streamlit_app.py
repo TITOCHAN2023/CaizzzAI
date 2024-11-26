@@ -79,7 +79,7 @@ else:
         "Authorization": st.session_state['token']
     }
     # 会话管理
-    st.sidebar.write("会话管理-未开放，仅测试阶段")
+    st.sidebar.write("会话管理")
     # 获取会话列表
     session_list_url = f"http://{_ip}:{_port}/v1/session/sessionlist?page_id=0&page_size=10"
     response = requests.get(session_list_url, headers=headers)

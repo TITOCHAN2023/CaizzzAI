@@ -2,13 +2,17 @@ import os
 from typing import Dict
 from langchain_openai.chat_models import ChatOpenAI
 from logger import logger
-
+from env import OPENAI_BASE_URL,OPENAI_LLM_MODEL
 
 def init_llm(llm_name: str, base_url: str, api_key: str, temperature:str,**kwargs) -> ChatOpenAI:
     """Init LLM."""
 
     kwargs.update({"verbose": True, "streaming": True})
-
+    if base_url=="":
+        base_url=OPENAI_BASE_URL
+    if llm_name=="":
+        llm_name=OPENAI_LLM_MODEL
+    
     llm= ChatOpenAI(
         model=llm_name,
         openai_api_base=base_url,
@@ -20,14 +24,3 @@ def init_llm(llm_name: str, base_url: str, api_key: str, temperature:str,**kwarg
     logger.debug(f"Init LLM: {llm.model_name}")
     return llm
 
-
-def ping_llm(llm: ChatOpenAI) -> bool:
-    # test the connection to the LLM
-    try :
-        llm_response = llm.invoke("ping! rely with 'pong'")
-        logger.debug(f"LLM response: {llm_response}")
-    except Exception as e:
-        logger.error(f"LLM ping failed: {e}")
-        return False
-    logger.debug("LLM ping successful")
-    return True

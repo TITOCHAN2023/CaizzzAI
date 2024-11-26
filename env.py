@@ -18,7 +18,7 @@ MYSQL_USER = os.environ.get("MYSQL_USER")
 
 
 
-OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL", "https://api.openai-proxy.org/v1")
+OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 OPENAI_SYS_PROMPT = os.environ.get("OPENAI_SYS_PROMPT", "")
 OPENAI_INIT_HISTORY = os.environ.get("OPENAI_INIT_HISTORY", "")
