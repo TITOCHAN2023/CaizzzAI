@@ -7,6 +7,10 @@ ERROR_LOG  = os.environ.get("ERROR_LOG")
 LOG_FORMAT = os.environ.get("LOG_FORMAT")
 INFO_LOG = os.environ.get("INFO_LOG")
 LOG_ROOT= os.environ.get("LOGGER_ROOT", "./log")
+FAISS_INDEX_PATH= os.environ.get("FAISS_INDEX_PATH","vdb_path")
+UPLOAD_FOLDER = os.environ.get("UPLOAD_FOLDER", "upload_files")
+UPLOAD_FILES_MAX_SIZE = eval(os.environ.get("UPLOAD_FILES_MAX_SIZE", "10 * 1024 * 1024"))
+
 
 
 
@@ -29,7 +33,7 @@ OPENAI_LLM_PATH = os.environ.get("OPENAI_LLM_PATH")
 OPENAI_MAX_TOKENS = int(os.environ.get("OPENAI_MAX_TOKENS", "100"))
 
 OPENAI_EMBEDDING_TYPE = os.environ.get("OPENAI_EMBEDDING_TYPE")
-OPENAI_EMBEDDING_MODEL = os.environ.get("OPENAI_EMBEDDING_MODEL")
+OPENAI_EMBEDDING_MODEL = os.environ.get("OPENAI_EMBEDDING_MODEL","text-embedding-3-small")
 OPENAI_EMBEDDING_PATH = os.environ.get("OPENAI_EMBEDDING_PATH")
 OPENAI_CHUNK_SIZE = int(os.environ.get("OPENAI_CHUNK_SIZE", "100"))
 

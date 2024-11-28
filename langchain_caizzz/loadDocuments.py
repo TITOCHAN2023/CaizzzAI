@@ -7,6 +7,9 @@ from pptx import Presentation
 import pytesseract
 from PIL import Image
 
+from langchain_core.documents.base import Document
+from uuid import uuid4
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 def extract_text_from_file(filepath):
     """根据文件类型提取文本"""
@@ -48,3 +51,16 @@ def extract_text_from_file(filepath):
     else:
         print(f"Unsupported file type: {ext}")
         return None
+
+
+
+def load_and_split_documents(file_path):
+    content = extract_text_from_file(file_path)
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=500,
+        chunk_overlap=50
+    )
+    texts = text_splitter.split_text(content)
+    documents = [Document(page_content=t, metadata={"source": file_path}) for t in texts]
+
+    return documents

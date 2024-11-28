@@ -9,7 +9,7 @@ from middleware.redis import  r
 
 
 
-def caizzzchain(llm: ChatOpenAI, memory_key: str,vdbid:str | None = None) :
+def caizzzchain(llm: ChatOpenAI, memory_key: str) :
 
 
 

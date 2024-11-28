@@ -11,3 +11,4 @@ pymysql
 mysql-connector-python
 streamlit
 pyjwt
+streamlit-toggle-switch

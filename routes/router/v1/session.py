@@ -1,5 +1,8 @@
 from datetime import datetime
 from typing import Any, AsyncGenerator, Callable, Dict, Tuple
+from env import FAISS_INDEX_PATH
+from langchain_caizzz.embedding import init_embedding
+from langchain_caizzz.faiss import load_faiss_index
 from logger import logger
 import json
 
@@ -9,6 +12,7 @@ from fastapi import APIRouter, Depends, HTTPException, Request
 
 from sqlalchemy import or_
 
+from middleware.hash.hash import hash_string
 from middleware.mysql.models.history import historySchema
 from middleware.mysql.models.session import SessionSchema
 from middleware.mysql.models.users import UserSchema
@@ -184,7 +188,7 @@ async def get_session(sessionname: str, info: Tuple[int, int] = Depends(jwt_auth
         if not r.exists(f"{uid}{sessionname}:input"):
             history_input = [usermessage for _, _, usermessage, _, _, _, _ in results[0:20]]
             history_output = [botmessage for _, _, _, botmessage, _, _, _ in results[0:20]]
-            logger.info(f"history_input:{history_input},history_output:{history_output}")
+            #logger.info(f"history_input:{history_input},history_output:{history_output}")
             if history_input and history_output:
                 for human_message, ai_response in zip(history_input, history_output):
                     r.rpush(f"{uid}{sessionname}:input", human_message)
@@ -224,14 +228,33 @@ async def post_user_message(sessionname: str, req : ChatRequest, request:Request
         result = query.first()
         session_id = result.sid
 
+
     async def generate():
         botmessage = ""
 
         llm=init_llm(req.llm_model,req.base_url,req.api_key,req.temperature)
-        chain=caizzzchain(llm,str(uid)+sessionname,req.vector_db_id)
+        chain=caizzzchain(llm,str(uid)+sessionname)
 
+        input_message = req.message
+
+        if req.vdb_name:
+            hash_vdbname = hash_string(req.vdb_name)
+            index_file_path = f"{FAISS_INDEX_PATH}/index/{str(uid)}/{hash_vdbname}.index"
+            mapping_file_path = f"{FAISS_INDEX_PATH}/index/{str(uid)}/{hash_vdbname}_mapping.pkl"
+
+            embeddings = init_embedding(embeddings_name="", api_key=req.api_key, base_url=req.base_url)
+
+            vector_store = load_faiss_index(index_file_path, mapping_file_path, embeddings)
+
+            results = vector_store.search(req.message, search_type="similarity", k=1)
+
+            relevant_docs = [doc.page_content for doc in results]
+
+            context = "\n\n".join(relevant_docs)
+
+            input_message = f"根据以下文档回答问题：\n{context}\n\n问题：{req.message}\n回答："
         try:
-            for chunk in chain.stream({"input": req.message}):
+            for chunk in chain.stream({"input": input_message}):
                 content = chunk.content
                 botmessage += content
                 # 将每个chunk转换为JSON并发送
@@ -253,7 +276,6 @@ async def post_user_message(sessionname: str, req : ChatRequest, request:Request
                 conn.commit()
                 r.lpush(f"{uid}{sessionname}:input", req.message)
                 r.lpush(f"{uid}{sessionname}:output", botmessage)
-                #print( r.lrange(f"{str(uid)+sessionname}:input",0,20))
             # 发送结束标记
             yield f"data: [DONE]\n\n"
             

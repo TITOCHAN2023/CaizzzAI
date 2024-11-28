@@ -10,5 +10,5 @@ class VectorDBSchema(BaseSchema):
     name : str = Column(String(255), nullable=False)
     create_at: datetime = Column(DateTime, default=datetime.now)
     update_at: datetime = Column(DateTime, default=datetime.now, onupdate=datetime.now)
-    
+    index : str = Column(String(255), nullable=True)
 
