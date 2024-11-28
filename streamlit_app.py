@@ -3,7 +3,6 @@ import streamlit as st
 import requests
 import json
 
-
 # st.title("CaizzzAI-未开放，仅测试阶段")
 _ip="localhost"
 _port=8000
@@ -81,7 +80,7 @@ else:
     # 会话管理
     st.sidebar.write("会话管理")
     # 获取会话列表
-    session_list_url = f"http://{_ip}:{_port}/v1/session/sessionlist?page_id=0&page_size=10"
+    session_list_url = f"http://{_ip}:{_port}/v1/session/sessionlist?page_id=0&page_size=100"
     response = requests.get(session_list_url, headers=headers)
     if response.status_code == 200:
         sessions = response.json()['data']['session_list']
@@ -113,6 +112,8 @@ else:
             st.rerun()  # 重新运行脚本，刷新会话列表
         else:
             st.error("删除会话失败")
+    
+    
 
     # 获取并显示历史记录
     history_url = f"http://{_ip}:{_port}/v1/session/{st.session_state['sessionname']}"
@@ -138,7 +139,60 @@ else:
     st.session_state['base_url']= st.sidebar.text_input("Base URL:", key="base_url_input")
     st.session_state['temp_input'] = st.sidebar.slider("Temperature", min_value=0.0, max_value=1.0, value=0.7, step=0.05)
 
+    vdb_on=st.sidebar.toggle("知识库",False)
 
+    if vdb_on:
+
+        get_vdb_url = f"http://{_ip}:{_port}/v1/vdb/getvdblist"
+        response = requests.get(get_vdb_url, headers=headers)
+        if response.status_code == 200:
+            vdb_list = response.json()['data']['vdb_list']
+            vdb_names = [vdb['name'] for vdb in vdb_list]
+            st.session_state['vdb_name'] = st.sidebar.selectbox("选择知识库", vdb_names)
+        else:
+            st.error("无法获取知识库列表")
+
+        new_vdb_name = st.sidebar.text_input("新建知识库名称")#未完成
+        if st.sidebar.button("创建知识库"):
+            create_vdb_url = f"http://{_ip}:{_port}/v1/vdb"
+            payload = {
+                "name": new_vdb_name
+            }
+            response = requests.post(create_vdb_url, headers=headers, json=payload)
+            if response.status_code == 200:
+                st.success(f"知识库 '{new_vdb_name}' 创建成功")
+                st.rerun()
+            else:
+                st.error("创建知识库失败")
+
+        vdb_model=st.sidebar.text_input("嵌入模型")
+        uploaded_file = st.sidebar.file_uploader("选择一个文件", type=["txt", "xlsx", "docx", "pdf"])
+        if uploaded_file is not None:
+            # # 显示文件信息
+            # st.write(f"文件名: {uploaded_file.name}")
+            # st.write(f"文件大小: {uploaded_file.size} bytes")
+
+            # 上传文件到 FastAPI 后端
+            if st.sidebar.button("上传文件"):
+                with st.spinner("上传中..."):
+                    payload = {
+                        "embedding_model": vdb_model,
+                        "api_key": str(st.session_state['api_key']),
+                        "base_url": str(st.session_state['base_url']),
+                    }
+                    files = {
+                        "file": (uploaded_file.name, uploaded_file.getvalue(), uploaded_file.type)
+                    }
+                    response = requests.post(
+                        f"http://{_ip}:{_port}/v1/vdb/{st.session_state['vdb_name']}/uploadfile",
+                        headers=headers,
+                        data=payload,
+                        files=files
+                    )
+                    if response.status_code == 200:
+                        st.sidebar.success(response.json()["data"]["info"])
+                    else:
+                        st.sidebar.error("文件上传失败！")
     
     st.title("💬 CaizzzAI")
     st.caption("🚀 powered by TitoChan")
@@ -163,7 +217,7 @@ else:
                 "api_key": str(st.session_state['api_key']),
                 "base_url": str(st.session_state['base_url']),
                 "message": user_input,
-                "vector_db_id": None
+                "vdb_name": None if not vdb_on else str(st.session_state['vdb_name'])
             }
             response = requests.post(chat_url, headers=headers, json=payload, stream=True)
 
