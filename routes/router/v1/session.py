@@ -184,6 +184,9 @@ async def get_session(sessionname: str, info: Tuple[int, int] = Depends(jwt_auth
             ]
         }
 
+        r.set(f"{uid}{sessionname}llm_model", results[0].llm_model)
+        r.set(f"{uid}{sessionname}user_api_key", results[0].user_api_key)
+        r.set(f"{uid}{sessionname}user_base_url", results[0].user_base_url)
 
         if not r.exists(f"{uid}{sessionname}:input"):
             history_input = [usermessage for _, _, usermessage, _, _, _, _ in results[0:20]]
@@ -208,7 +211,8 @@ async def post_user_message(sessionname: str, req : ChatRequest, request:Request
     uid,_=info
     logger.info(f"uid:{uid},sessionname:{sessionname},message:{req}")
 
-    
+    user_api_key = r.get(f"{uid}{sessionname}user_api_key") if req.api_key == "" else req.api_key
+    user_base_url = r.get(f"{uid}{sessionname}user_base_url") if req.base_url == "" else req.base_url
 
     client_ip  = request.client.host
 
@@ -232,17 +236,18 @@ async def post_user_message(sessionname: str, req : ChatRequest, request:Request
     async def generate():
         botmessage = ""
 
-        llm=init_llm(req.llm_model,req.base_url,req.api_key,req.temperature)
+        llm=init_llm(req.llm_model,user_base_url,user_api_key,req.temperature)
         chain=caizzzchain(llm,str(uid)+sessionname)
 
         input_message = req.message
 
         if req.vdb_name:
+            
             hash_vdbname = hash_string(req.vdb_name)
             index_file_path = f"{FAISS_INDEX_PATH}/index/{str(uid)}/{hash_vdbname}.index"
             mapping_file_path = f"{FAISS_INDEX_PATH}/index/{str(uid)}/{hash_vdbname}_mapping.pkl"
 
-            embeddings = init_embedding(embeddings_name="", api_key=req.api_key, base_url=req.base_url)
+            embeddings = init_embedding(embeddings_name="", api_key=user_api_key, base_url=user_base_url)
 
             vector_store = load_faiss_index(index_file_path, mapping_file_path, embeddings)
 

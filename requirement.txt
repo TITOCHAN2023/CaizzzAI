@@ -12,3 +12,10 @@ mysql-connector-python
 streamlit
 pyjwt
 streamlit-toggle-switch
+faiss-cpu
+pdfplumber
+python-docx
+bs4
+python-pptx
+pytesseract
+python-multipart
