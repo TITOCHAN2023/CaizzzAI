@@ -16,7 +16,7 @@ from middleware.mysql.models.users import UserSchema
 from middleware.mysql import session
 from routes.model.request import EmbeddingRequest
 from routes.model.response import StandardResponse
-from ...auth.oauth import jwt_auth
+from ...auth.jwt import jwt_auth
 from middleware.redis import r
 from middleware.hash.hash import hash_string
 from env import UPLOAD_FILES_MAX_SIZE,UPLOAD_FOLDER,FAISS_INDEX_PATH

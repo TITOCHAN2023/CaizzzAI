@@ -19,7 +19,7 @@ from middleware.mysql.models.users import UserSchema
 from middleware.mysql import session
 from routes.model.request import CreateSessionRequest,ChatRequest
 from routes.model.response import StandardResponse
-from ...auth.oauth import jwt_auth
+from ...auth.jwt import jwt_auth
 from middleware.redis import r
 
 from langchain_caizzz.llm import init_llm

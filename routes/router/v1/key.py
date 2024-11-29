@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import or_
 
 from ...model.response import StandardResponse
-from ...auth.oauth import jwt_auth
+from ...auth.jwt import jwt_auth
 from logger import logger
 
 key_router = APIRouter(prefix="/key", tags=["key"])
