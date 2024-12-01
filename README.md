@@ -6,7 +6,7 @@ based on FAISS, build a RAG.
 
 Named by Isshiki Iroha's Chinese name--"Caiyu" .
 
-![](static/img/image.png)
+![image](static/img/image.png)
 
 conda environment config：
 
