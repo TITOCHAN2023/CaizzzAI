@@ -2,9 +2,15 @@
 
 # CaizzzAI (developing)
 
-based on FAISS, build a RAG.
+An AI project with Langchain,Openai,and FAISS,
 
-Named by Isshiki Iroha's Chinese name--"Caiyu" .
+delivers the high-touch service with AI-Chat and RAG,
+
+based on FAISS,
+
+named by Isshiki Iroha's Chinese name--"Caiyu" .
+
+
 
 <img src="static/img/image.png" alt="image" style="width:40%;" />
 
