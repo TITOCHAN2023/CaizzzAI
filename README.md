@@ -2,12 +2,25 @@
 
 # CaizzzAI (developing)
 
+based on FAISS, build a RAG.
+
+Named by Isshiki Iroha's Chinese name--"Caiyu" .
+
+![](static/img/image.png)
 
 conda environment config：
 
 ```conda create -n caizzzai python=3.11```
 
+```conda activate caizzzai```
+
 ```pip install -r requirement.txt```
+
+Or other way to build up th environment,
+
+the Python version must be 3.11.
+
+docker coming soon.
 
 create .env:
 
@@ -62,9 +75,8 @@ REDIS_HOST = "xxx"
 REDIS_PORT = 6379
 REDIS_PASSWORD = "xxx"
 
-
-
 ```
+
 then, u could start with this code
 
 ```
@@ -74,3 +86,4 @@ nohup uvicorn main:app --reload --env-file .env > uvicorn.log 2>&1 &
 nohup streamlit run streamlit_app.py --server.enableCORS false --server.port 8502 --server.enableXsrfProtection false --server.baseUrlPath "gpt" > streamlit.log 2>&1 &
 
 ```
+

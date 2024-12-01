@@ -32,7 +32,7 @@ ABOUT = """\
 """
 st.set_page_config(
         page_title="CaizzzAI-未开放，仅测试阶段",
-        page_icon="🤖",
+        page_icon="static/img/logo.png",
         layout= "centered",
         initial_sidebar_state="expanded",
         menu_items={
@@ -152,7 +152,7 @@ else:
         else:
             st.error("无法获取知识库列表")
 
-        new_vdb_name = st.sidebar.text_input("新建知识库名称")#未完成
+        new_vdb_name = st.sidebar.text_input("新建知识库名称")
         if st.sidebar.button("创建知识库"):
             create_vdb_url = f"http://{_ip}:{_port}/v1/vdb"
             payload = {

@@ -47,9 +47,9 @@ def login(request: LoginRequest):
         else:
             api_key.api_key_secret = token
         conn.commit()
-
+    
     logger.info(token)
-    return {"token": "Bearer "+token}
+    return {"token": "Bearer "+token,"avatar":user.avatar}
 
 
 @root_router.post("/registerzzz")
