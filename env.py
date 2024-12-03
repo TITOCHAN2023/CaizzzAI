@@ -1,5 +1,8 @@
 import os
 
+allowed_extensions = [".txt", ".pdf", ".docx", ".xlsx",".htm","html"]
+public_vdb_list=["SZTU公共知识库"]
+
 
 LOGGER_LEVEL = os.environ.get("LOGGER_LEVEL", "INFO")
 LOGGER_ROOT = os.environ.get("LOGGER_ROOT", "./log")

@@ -6,6 +6,14 @@ class CreateSessionRequest(BaseModel):
     sessionname: str
     
 
+class ResetUserRequest(BaseModel):
+    originUsername: str
+    username: str
+    originPassword:str
+    password: str
+    avatar: str = None
+
+
 class RegisterRequest(BaseModel):
     username: str
     password: str

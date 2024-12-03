@@ -28,7 +28,8 @@ from langchain_caizzz.faiss import update_vdb
 vdb_router = APIRouter(prefix="/vdb", tags=["vdb"])
 
 
-public_vdb_list=["SZTU公共知识库"]
+from env import allowed_extensions,public_vdb_list
+
 
 '''upload file to vdb'''
 @vdb_router.post("/{vdbname}/uploadfile", response_model=StandardResponse, dependencies=[Depends(jwt_auth)])
@@ -38,7 +39,7 @@ async def upload_file(vdbname: str,
     api_key: str = Form(...),file: UploadFile = File(...), info: Tuple[int, int] = Depends(jwt_auth)) -> StandardResponse:
     uid, _ = info
 
-    allowed_extensions = {".txt", ".pdf", ".docx", ".xlsx"}
+    
 
     _, ext = os.path.splitext(file.filename)
     ext = ext.lower()
@@ -157,6 +158,9 @@ async def create_vdb(request: Dict[str, Any],info: Tuple[int, int] = Depends(jwt
         if vdb:
             raise HTTPException(status_code=400, detail="此名字已经存在")
         
+        if name in public_vdb_list:
+            if not user.is_admin:
+                raise HTTPException(status_code=400,detail="公共知识库名字不支持创建,请更换名字")
 
         _vdb = VectorDBSchema(uid=uid, name=name,index="faiss")
         conn.add(_vdb)

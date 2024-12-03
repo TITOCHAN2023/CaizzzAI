@@ -2,7 +2,7 @@ import base64
 import streamlit as st
 import requests
 import json
-
+from env import allowed_extensions
 # Constants
 _IP = "localhost"
 _PORT = 8000
@@ -185,7 +185,7 @@ else:
                 st.error("Failed to create knowledge base")
 
         vdb_model = st.sidebar.text_input("Embedding Model")
-        uploaded_file = st.sidebar.file_uploader("Select a File", type=["txt", "xlsx", "docx", "pdf"])
+        uploaded_file = st.sidebar.file_uploader("Select a File", type=allowed_extensions)
         if uploaded_file is not None:
             if st.sidebar.button("Upload File"):
                 with st.status("Uploading...", expanded=True) as status:

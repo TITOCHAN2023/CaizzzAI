@@ -3,7 +3,7 @@ from middleware.jwt import encode_token
 from middleware.mysql import session
 from middleware.mysql.models import UserSchema,ApiKeySchema
 from ..model.response import StandardResponse
-from ..model.request import LoginRequest, RegisterRequest
+from ..model.request import LoginRequest, RegisterRequest,ResetUserRequest
 from datetime import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
 from logger import logger
@@ -52,7 +52,7 @@ def login(request: LoginRequest):
     return {"token": "Bearer "+token,"avatar":user.avatar}
 
 
-@root_router.post("/registerzzz")
+@root_router.post("/register")
 def register(request: RegisterRequest):
     with session() as conn:
         # 检查用户名是否已存在
@@ -77,3 +77,26 @@ def register(request: RegisterRequest):
         
 
     return {"message": "注册成功"}
+
+
+
+@root_router.post("/reset_user")
+def reset_user(request:ResetUserRequest):
+    with session() as conn:
+        user =conn.query(UserSchema).filter(UserSchema.username==request.originUsername).first()
+
+        if not user:
+            raise HTTPException(status_code=401, detail="用户不存在")
+    
+        if not check_password_hash(user.password_hash, request.originPassword):
+            raise HTTPException(status_code=401, detail="密码错误")
+            
+        user.username=request.username
+        user.password_hash=generate_password_hash(request.password)
+        logger.info(user.password_hash)
+        if request.avatar:
+            user.avatar=request.avatar
+        user.last_login = datetime.now()
+        conn.commit()
+
+    return {"message": "更改成功"}

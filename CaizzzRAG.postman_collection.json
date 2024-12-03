@@ -1,0 +1,297 @@
+{
+	"info": {
+		"_postman_id": "42a9d947-67ae-4280-87da-5404aec53158",
+		"name": "CaizzzRAG",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "33977180"
+	},
+	"item": [
+		{
+			"name": "login",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const getToken = {",
+							"    url: \"http://localhost:8000/root/login\",",
+							"    method: \"POST\",",
+							"    header: {",
+							"        'Content-Type': 'application/json'",
+							"    },",
+							"    body: {",
+							"        mode: \"raw\",",
+							"        raw: JSON.stringify({",
+							"            \"username\": pm.globals.get('username'),",
+							"            \"password\": pm.globals.get('password')",
+							"        })",
+							"    }",
+							"};",
+							"",
+							"pm.sendRequest(getToken, function(err, res) {",
+							"    if (err) {",
+							"        console.error(err);",
+							"    } else {",
+							"        const jsonResponse = res.json();",
+							"        console.log(jsonResponse);  // 打印响应内容以进行调试",
+							"        if (jsonResponse.token) {",
+							"            pm.globals.set(\"token\", jsonResponse.token);",
+							"        } else {",
+							"            console.error(\"Token not found in response\");",
+							"        }",
+							"    }",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\":\"1\",\n    \"password\":\"1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8000/root/login"
+			},
+			"response": []
+		},
+		{
+			"name": "register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\":\"lihaoxian\",\n    \"password\":\"#$!dkjah\",\n    \"avatar\":\"https://foruda.gitee.com/avatar/1732638343495674912/14327106_horyiny_1732638343.jpeg!avatar200\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://127.0.0.1:8000/root/registerzzz"
+			},
+			"response": []
+		},
+		{
+			"name": "reset",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\":\"titochan\",\n    \"originUsername\":\"titochanzhenshuai\",\n    \"password\":\"\",\n    \"originPassword\":\"\",\n    \"avatar\":\"https://titochan.top/blog/img/avatar.jpg\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://127.0.0.1:8000/root/reset_user"
+			},
+			"response": []
+		},
+		{
+			"name": "getkey",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIRhZTZjZC02YjIxODA0M2NjZDEiLCJsZXZlbCI6MCwiZXhwIjoxNzMxNjYwNjU4LjEwMzUzNjh9.lF24NWf8xZyjztfrRHYG9yi5Db2K_sSNptX5sgmcct0",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "Authorization",
+							"value": "Bearer eyJhbGciOiJIUzI1NiIQ0YWFjNy1iZGUyZmQ3NDkwZWQiLCJsZXZlbCI6MCwiZXhwIjoxNzMxNTc0NjAxLjcwNzE0NzF9.0DXa032S5WJ43rXY6I53O3wr3teRrPCWprKtY4q4nzM",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": "http://localhost:8000/v1/key"
+			},
+			"response": []
+		},
+		{
+			"name": "createSession",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIQ5NWIzZC00YjUzN2E4M2JlZDMiLCJsZXZlbCI6MCwiZXhwIjoxNzMxNjY4MjQ4LjE2NTQwOH0.RKd28gyXU7B6HBXO9ek69S923Met5ft0GXeJBPEaMSM",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"sessionname\":\"test1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8000/v1/session"
+			},
+			"response": []
+		},
+		{
+			"name": "getSessionList",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIRhZTZjZC02YjIxODA0M2NjZDEiLCJsZXZlbCI6MCwiZXhwIjoxNzMxNjYwNjU4LjEwMzUzNjh9.lF24NWf8xZyjztfrRHYG9yi5Db2K_sSNptX5sgmcct0",
+						"type": "text"
+					},
+					{
+						"key": "page_id",
+						"value": "1",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "page_size",
+						"value": "20",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "Authorization",
+							"value": "Bearer eyJhbGciOiJIUzI1NiIQ2MjQ5ZS1kYzAzZTA0N2VlNGEiLCJsZXZlbCI6MCwiZXhwIjoxNzMxNTc2MzQyLjY2OTE0Njh9.Si1r3kcxctkblkTqS7EutkrHXo3NViB4ZeTFrJRuz6Y",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8000/v1/session/sessionlist?page_id=0&page_size=20",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8000",
+					"path": [
+						"v1",
+						"session",
+						"sessionlist"
+					],
+					"query": [
+						{
+							"key": "page_id",
+							"value": "0"
+						},
+						{
+							"key": "page_size",
+							"value": "20"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteSession",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIQ0NTRjNi1iNDk1MjkyZGFlNjYiLCJsZXZlbCI6MCwiZXhwIjoxNzMxNjA2MjE5Ljc1NTcxNTF9.jTsHQIZ8XXUf8C794zKNxY9ZjkGkGaySx7ZwW_N-cQs",
+						"type": "text"
+					}
+				],
+				"url": "http://localhost:8000/v1/session/test1/delete"
+			},
+			"response": []
+		},
+		{
+			"name": "getSessionHistory",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIQ3NDVjMC1mNTcwZmRkYjQ4ZjciLCJsZXZlbCI6MCwiZXhwIjoxNzMyMDA0NDQxLjEzOTY5NjF9.bcjk5H8vGi9ExnYQjx55Poh1KlvT6MhQ2in6PgRc4oI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "Authorization",
+							"value": "Bearer eyJhbGciOiJIUzI1NiIQ0NTRjNi1iNDk1MjkyZGFlNjYiLCJsZXZlbCI6MCwiZXhwIjoxNzMxNjA2MjE5Ljc1NTcxNTF9.jTsHQIZ8XXUf8C794zKNxY9ZjkGkGaySx7ZwW_N-cQs",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": "http://localhost:8000/v1/session/test1"
+			},
+			"response": []
+		},
+		{
+			"name": "SessionChat",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzI1NiIQ3NDVjMC1mNTcwZmRkYjQ4ZjciLCJsZXZlbCI6MCwiZXhwIjoxNzMyMDA0NDQxLjEzOTY5NjF9.bcjk5H8vGi9ExnYQjx55Poh1KlvT6MhQ2in6PgRc4oI",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"llm_model\":\"gpt-4o-mini\",\n    \"temperature\":0.5,\n    \"api_key\":\"\",\n    \"base_url\":\"\",\n    \"message\":\"你好,我的九个室友是谁\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": "http://localhost:8000/v1/session/test1/chat"
+			},
+			"response": []
+		}
+	]
+}
