@@ -10,10 +10,31 @@ from PIL import Image
 from langchain_core.documents.base import Document
 from uuid import uuid4
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from env import SERVER
 
 def extract_text_from_file(filepath):
-    """根据文件类型提取文本"""
+
     ext = os.path.splitext(filepath)[-1].lower()
+    if not SERVER:
+        return extract_text_from_file_cpu(filepath,ext)
+    else:
+        return extract_text_from_file_gpu(filepath,ext)
+    
+
+def extract_text_from_file_gpu(filepath,ext):
+    from middleware.loader import pdfloader
+    if ext == ".pdf":
+
+        """HorYiny here u could help me (file could be png pdf ...)"""
+
+    else:
+        return extract_text_from_file_cpu(filepath,ext) #if can't use gpu, use cpu instead
+
+
+
+
+
+def extract_text_from_file_cpu(filepath,ext):
     if ext == ".txt":
         with open(filepath, "r", encoding="utf-8") as f:
             return f.read()
