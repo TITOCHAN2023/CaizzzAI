@@ -85,6 +85,9 @@ async def create_session(request: CreateSessionRequest,info: Tuple[int, int] = D
         else:
             conn.commit()
 
+        if request.sessionname == "":
+            raise HTTPException(status_code=400, detail="Session name cannot be empty")
+        
         _session = SessionSchema(uid=uid, sessionname=request.sessionname)
         conn.add(_session)
         conn.commit()
