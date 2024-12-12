@@ -22,7 +22,11 @@ def extract_text_from_file(filepath):
     
 
 def extract_text_from_file_gpu(filepath,ext):
-    from middleware.loader import pdfloader
+
+
+    from middleware.content_parser import pdfloader
+
+    
     if ext == ".pdf":
 
         """HorYiny here u could help me (file could be png pdf ...)"""
