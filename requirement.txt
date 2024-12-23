@@ -20,3 +20,4 @@ python-pptx
 pytesseract
 python-multipart
 openpyxl
+langchain-ollama

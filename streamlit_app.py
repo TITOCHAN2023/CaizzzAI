@@ -2,8 +2,16 @@ import base64
 import streamlit as st
 import requests
 import json
-from env import allowed_extensions
-# Constants
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+tts_url=os.environ.get("TTS_URL")
+
+allowed_extensions = [".txt", ".pdf", ".docx", ".xlsx",".htm","html"]
+
+
 _IP = "localhost"
 _PORT = 8000
 ABOUT = """\
@@ -209,6 +217,8 @@ else:
                     else:
                         st.sidebar.error("File upload failed!")
                         status.update(label="Upload complete!", state="complete", expanded=False)
+    
+    voice_on = st.sidebar.toggle("Voice", False)
 
     # Main chat interface
     st.title("💬 CaizzzAI")
@@ -217,6 +227,18 @@ else:
     for usermessage, botmessage in st.session_state['messages']:
         st.chat_message("user", avatar=st.session_state['avatar']).write(usermessage)
         st.chat_message("assistant", avatar=st.session_state["assistant"]).write(botmessage)
+        if voice_on:
+            voice = st.session_state.get('voice', 'Person3')
+            
+            requestsdata = {
+                "voicename": voice,
+                "content": botmessage,
+            }
+            response = requests.post(tts_url, data=requestsdata)
+
+            jsonresponse1 = response.json()
+            st.audio(jsonresponse1['url'])
+        
 
     if user_input := st.chat_input():
         if user_input:
@@ -250,8 +272,24 @@ else:
                     except json.JSONDecodeError as e:
                         continue
             message_placeholder_bot.empty()
-            st.chat_message("assistant", avatar=st.session_state["assistant"]).write(bot_response)
-            st.session_state.messages.append((user_input, bot_response))
+
+
+        st.chat_message("assistant", avatar=st.session_state["assistant"]).write(bot_response)
+        if voice_on:
+            voice = st.session_state.get('voice', 'Person3')
+            
+            requestsdata = {
+                "voicename": voice,
+                "content": bot_response,
+            }
+            response = requests.post(tts_url, data=requestsdata)
+
+            jsonresponse1 = response.json()
+            st.audio(jsonresponse1['url'])
+
+
+
+        st.session_state.messages.append((user_input, bot_response))
 
 # CSS styling
 CSS_STYLE = """

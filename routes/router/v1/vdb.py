@@ -104,6 +104,12 @@ async def upload_file(vdbname: str,
 @vdb_router.get("/getvdblist", response_model=StandardResponse, dependencies=[Depends(jwt_auth)])
 async def get_vdb_list(info: Tuple[int, int] = Depends(jwt_auth)) -> StandardResponse:
     uid,_=info
+
+    if r.exists(f"vdb_list:{uid}"):
+        vdb_list=[json.loads(vdb) for vdb in r.lrange(f"vdb_list:{uid}",0,-1)]
+        data={"vdb_list":vdb_list}
+        return StandardResponse(code=0, status="success",data=data)
+
     with session() as conn:
         user = conn.query(UserSchema).filter(UserSchema.uid == uid).first()
         if not user:
@@ -130,12 +136,16 @@ async def get_vdb_list(info: Tuple[int, int] = Depends(jwt_auth)) -> StandardRes
         }for vdbid,name,create_at,update_at in res]
 
     data={"vdb_list":vdb_list}
+
+    for vdb in vdb_list:
+        r.rpush(f"vdb_list:{uid}", json.dumps(vdb))
+
     return StandardResponse(code=0, status="success", data=data)
 
 
 
 
-'''create vdb'''#未完成
+'''create vdb'''
 @vdb_router.post("", response_model=StandardResponse, dependencies=[Depends(jwt_auth)])
 async def create_vdb(request: Dict[str, Any],info: Tuple[int, int] = Depends(jwt_auth)) -> StandardResponse:
     uid,_=info
@@ -167,4 +177,12 @@ async def create_vdb(request: Dict[str, Any],info: Tuple[int, int] = Depends(jwt
         conn.commit()
 
         data = {"name": _vdb.name, "create_at": _vdb.create_at}
+
+        r.rpush(f"vdb_list:{uid}", json.dumps({
+            "vdbid":_vdb.vdbid,
+            "name":_vdb.name,
+            "create_at":str(_vdb.create_at),
+            "update_at":str(_vdb.update_at)
+        }))
+        
     return StandardResponse(code=0, status="success", data=data)

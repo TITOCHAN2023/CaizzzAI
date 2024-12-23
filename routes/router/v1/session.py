@@ -34,6 +34,21 @@ session_router = APIRouter(prefix="/session", tags=["session"])
 async def get_session(page_id:int,page_size:int,info: Tuple[int, int] = Depends(jwt_auth)) -> StandardResponse:
     uid,_=info
     logger.info(f"uid:{uid},page_id:{page_id},page_size:{page_size}")
+
+    if r.exists(f"{uid}_session_list"):
+        session_list = r.lrange(f"{uid}_session_list", page_id*page_size, (page_id+1)*page_size-1)
+        data = {
+            "session_list": [
+                {
+                    "sid": i,
+                    "sessionname": session_name,
+                    "update_at": ""
+                }
+                for i, session_name in enumerate(session_list)
+            ]
+        }
+        return StandardResponse(code=0, status="success", data=data)
+
     with session() as conn:
         user = conn.query(UserSchema).filter(UserSchema.uid == uid).first()
         if not user:
@@ -61,6 +76,10 @@ async def get_session(page_id:int,page_size:int,info: Tuple[int, int] = Depends(
         }for sid,sessionname,update_at in res]
 
     data={"session_list":session_list}
+
+    for session_ in session_list:
+        r.rpush(f"{uid}_session_list", session_["sessionname"])
+
     return StandardResponse(code=0, status="success", data=data)
         
 
@@ -73,6 +92,7 @@ async def get_session(page_id:int,page_size:int,info: Tuple[int, int] = Depends(
 @session_router.post("", response_model=StandardResponse, dependencies=[Depends(jwt_auth)])
 async def create_session(request: CreateSessionRequest,info: Tuple[int, int] = Depends(jwt_auth)) -> StandardResponse:
     uid,_=info
+
     logger.info(f"uid:{uid},sessionname:{request.sessionname}")
     with session() as conn:
         user = conn.query(UserSchema).filter(UserSchema.uid == uid).first()
@@ -88,11 +108,23 @@ async def create_session(request: CreateSessionRequest,info: Tuple[int, int] = D
         if request.sessionname == "":
             raise HTTPException(status_code=400, detail="Session name cannot be empty")
         
+        query=(
+            conn.query(SessionSchema)
+            .filter(SessionSchema.sessionname==request.sessionname)
+            .filter(SessionSchema.uid==uid)
+            .filter(SessionSchema.delete_at==None)
+        )
+        if query.first():
+            raise HTTPException(status_code=400, detail="Session name already exists")
+        
         _session = SessionSchema(uid=uid, sessionname=request.sessionname)
         conn.add(_session)
         conn.commit()
 
         data = {"sessionname": _session.sessionname, "create_at": _session.create_at}
+
+
+
     return StandardResponse(code=0, status="success", data=data)
 
 
@@ -142,6 +174,30 @@ async def delete_session(sessionname:str,info: Tuple[int, int] = Depends(jwt_aut
 async def get_session(sessionname: str, info: Tuple[int, int] = Depends(jwt_auth)):
     uid, _ = info
 
+    if r.exists(f"{uid}{sessionname}:usermessage"):
+        usermessage = r.lrange(f"{uid}{sessionname}:usermessage", 0, -1)
+        botmessage = r.lrange(f"{uid}{sessionname}:botmessage", 0, -1)
+        llm_model = r.get(f"{uid}{sessionname}llm_model")
+        user_api_key = r.get(f"{uid}{sessionname}user_api_key")
+        user_base_url = r.get(f"{uid}{sessionname}user_base_url")
+        data = {
+            "sessionname": sessionname,
+            "create_at": "",
+            "update_at": "",
+            "history": [
+                {
+                    "hid": i,
+                    "create_at": "",
+                    "usermessage": usermessage[i],
+                    "botmessage": botmessage[i],
+                    "llm_model": llm_model,
+                    "user_api_key": user_api_key,
+                    "user_base_url": user_base_url
+                }
+                for i in range(len(usermessage))
+            ]
+        }
+        return StandardResponse(code=0, status="success", data=data)
 
     with session() as conn:
         if not conn.is_active:
@@ -165,42 +221,39 @@ async def get_session(sessionname: str, info: Tuple[int, int] = Depends(jwt_auth
             conn.query(historySchema.hid,historySchema.create_at,historySchema.usermessage, historySchema.botmessage,historySchema.llm_model,historySchema.user_api_key,historySchema.user_base_url)
                 .filter(historySchema.sid == session_id)
                 .filter(or_(historySchema.is_deleted.is_(None), historySchema.is_deleted == False))
-                .order_by(historySchema.create_at.desc())
+                .order_by(historySchema.create_at.asc())
                 )
         
         results = query.all()
-        data = {
-            "sessionname": result.sessionname,
-            "create_at": str(result.create_at),
-            "update_at": str(result.update_at),
-            "history": [
-                {
-                    "hid": hid,
-                    "create_at": str(create_at),
-                    "usermessage": usermessage,
-                    "botmessage": botmessage,
-                    "llm_model": llm_model,
-                    "user_api_key": user_api_key,
-                    "user_base_url": user_base_url
-                }
-                for hid,create_at,usermessage,botmessage,llm_model,user_api_key,user_base_url in results[::-1]
-            ]
-        }
+        if not results:
+            data={"history":[]}
+        else:
+            data = {
+                "sessionname": result.sessionname,
+                "create_at": str(result.create_at),
+                "update_at": str(result.update_at),
+                "history": [
+                    {
+                        "hid": hid,
+                        "create_at": str(create_at),
+                        "usermessage": usermessage,
+                        "botmessage": botmessage,
+                        "llm_model": llm_model,
+                        "user_api_key": user_api_key,
+                        "user_base_url": user_base_url
+                    }
+                    for hid,create_at,usermessage,botmessage,llm_model,user_api_key,user_base_url in results
+                ]
+            }
 
-        r.set(f"{uid}{sessionname}llm_model", results[0].llm_model)
-        r.set(f"{uid}{sessionname}user_api_key", results[0].user_api_key)
-        r.set(f"{uid}{sessionname}user_base_url", results[0].user_base_url)
+        for history in data["history"]:
+            r.rpush(f"{uid}{sessionname}:usermessage", history["usermessage"])
+            r.rpush(f"{uid}{sessionname}:botmessage", history["botmessage"])
+            if history["llm_model"]: r.set(f"{uid}{sessionname}llm_model", history["llm_model"])
+            if history["user_api_key"]: r.set(f"{uid}{sessionname}user_api_key", history["user_api_key"])
+            if history["user_base_url"]: r.set(f"{uid}{sessionname}user_base_url", history["user_base_url"])
 
-        if not r.exists(f"{uid}{sessionname}:input"):
-            history_input = [usermessage for _, _, usermessage, _, _, _, _ in results[0:20]]
-            history_output = [botmessage for _, _, _, botmessage, _, _, _ in results[0:20]]
-            #logger.info(f"history_input:{history_input},history_output:{history_output}")
-            if history_input and history_output:
-                for human_message, ai_response in zip(history_input, history_output):
-                    r.rpush(f"{uid}{sessionname}:input", human_message)
-                    r.rpush(f"{uid}{sessionname}:output", ai_response)
-            
-
+    logger.info(f"llm_model:{r.get(f'{uid}{sessionname}llm_model')},user_api_key:{r.get(f'{uid}{sessionname}user_api_key')},user_base_url:{r.get(f'{uid}{sessionname}user_base_url')}")
 
     return StandardResponse(code=0, status="success", data=data)
 
@@ -282,8 +335,8 @@ async def post_user_message(sessionname: str, req : ChatRequest, request:Request
                 )
                 conn.add(history)
                 conn.commit()
-                r.lpush(f"{uid}{sessionname}:input", req.message)
-                r.lpush(f"{uid}{sessionname}:output", botmessage)
+                r.rpush(f"{uid}{sessionname}:usermessage", req.message)
+                r.rpush(f"{uid}{sessionname}:botmessage", botmessage)
             # 发送结束标记
             yield f"data: [DONE]\n\n"
             
