@@ -25,12 +25,6 @@ conda environment config：
 Or other way to build up th environment,
 
 the Python version must be 3.11.
-
-and if you want to run GPU-version
-
-``` conda install pytorch torchvision torchaudio pytorch-cuda=xxx -c pytorch -c nvidia ```
-
-fill xxx according to ur gpu.
  
 create .env:
 
@@ -41,6 +35,8 @@ With following the env.py, fill ".env" like:
 #Server class
 SERVER = 0 # 0: CPU, 1: GPU(better performance)
 
+# TTS (create TTS server see here https://github.com/TITOCHAN2023/F5-TTS)
+TTS_URL="xxxxx"
 
 # API
 API_HOST = "localhost"
