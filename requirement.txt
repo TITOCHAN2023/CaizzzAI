@@ -21,3 +21,4 @@ pytesseract
 python-multipart
 openpyxl
 langchain-ollama
+podcastfy

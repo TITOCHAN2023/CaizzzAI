@@ -4,6 +4,7 @@ import os
 allowed_extensions = [".txt", ".pdf", ".docx", ".xlsx",".htm","html"]
 public_vdb_list=["SZTU公共知识库"]
 TTS_URL=os.environ.get("TTS_URL")
+PODCASTPOSITION=os.environ.get("PODCASTPOSITION")
 
 SERVER=eval(os.environ.get("SERVER","0"))
 

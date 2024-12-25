@@ -37,9 +37,8 @@ async def upload_file(vdbname: str,
     embedding_model: str = Form(...),
     base_url: str = Form(...),
     api_key: str = Form(...),file: UploadFile = File(...), info: Tuple[int, int] = Depends(jwt_auth)) -> StandardResponse:
-    uid, _ = info
 
-    
+    uid, _ = info
 
     _, ext = os.path.splitext(file.filename)
     ext = ext.lower()

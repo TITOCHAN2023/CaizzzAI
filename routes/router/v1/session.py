@@ -14,7 +14,7 @@ from sqlalchemy import or_
 
 from middleware.hash.hash import hash_string
 from middleware.mysql.models.history import historySchema
-from middleware.mysql.models.session import SessionSchema
+from middleware.mysql.models.chat_session import ChatSessionSchema
 from middleware.mysql.models.users import UserSchema
 from middleware.mysql import session
 from routes.model.request import CreateSessionRequest,ChatRequest
@@ -61,10 +61,10 @@ async def get_session(page_id:int,page_size:int,info: Tuple[int, int] = Depends(
             conn.commit()
 
         query=(
-            conn.query(SessionSchema.sid,SessionSchema.sessionname,SessionSchema.update_at)
-            .filter(SessionSchema.uid==uid)
-            .filter(SessionSchema.delete_at==None)
-            .order_by(SessionSchema.update_at.desc())
+            conn.query(ChatSessionSchema.sid,ChatSessionSchema.sessionname,ChatSessionSchema.update_at)
+            .filter(ChatSessionSchema.uid==uid)
+            .filter(ChatSessionSchema.delete_at==None)
+            .order_by(ChatSessionSchema.update_at.desc())
             .offset(page_id*page_size)
         )
         res=query.limit(page_size).all()
@@ -109,15 +109,15 @@ async def create_session(request: CreateSessionRequest,info: Tuple[int, int] = D
             raise HTTPException(status_code=400, detail="Session name cannot be empty")
         
         query=(
-            conn.query(SessionSchema)
-            .filter(SessionSchema.sessionname==request.sessionname)
-            .filter(SessionSchema.uid==uid)
-            .filter(SessionSchema.delete_at==None)
+            conn.query(ChatSessionSchema)
+            .filter(ChatSessionSchema.sessionname==request.sessionname)
+            .filter(ChatSessionSchema.uid==uid)
+            .filter(ChatSessionSchema.delete_at==None)
         )
         if query.first():
             raise HTTPException(status_code=400, detail="Session name already exists")
         
-        _session = SessionSchema(uid=uid, sessionname=request.sessionname)
+        _session = ChatSessionSchema(uid=uid, sessionname=request.sessionname)
         conn.add(_session)
         conn.commit()
 
@@ -150,10 +150,10 @@ async def delete_session(sessionname:str,info: Tuple[int, int] = Depends(jwt_aut
             conn.commit()
 
         query=(
-            conn.query(SessionSchema)
-            .filter(SessionSchema.sessionname==sessionname)
-            .filter(SessionSchema.uid==uid)
-            .filter(SessionSchema.delete_at==None)
+            conn.query(ChatSessionSchema)
+            .filter(ChatSessionSchema.sessionname==sessionname)
+            .filter(ChatSessionSchema.uid==uid)
+            .filter(ChatSessionSchema.delete_at==None)
         )
         res=query.first()
         if not res:
@@ -207,10 +207,10 @@ async def get_session(sessionname: str, info: Tuple[int, int] = Depends(jwt_auth
             conn.commit()
 
         query = (
-            conn.query(SessionSchema.sid,SessionSchema.sessionname, SessionSchema.create_at, SessionSchema.update_at)
-            .filter(SessionSchema.sessionname == sessionname)
-            .filter(SessionSchema.uid == uid)
-            .filter(or_(SessionSchema.delete_at.is_(None), datetime.now() < SessionSchema.delete_at))
+            conn.query(ChatSessionSchema.sid,ChatSessionSchema.sessionname, ChatSessionSchema.create_at, ChatSessionSchema.update_at)
+            .filter(ChatSessionSchema.sessionname == sessionname)
+            .filter(ChatSessionSchema.uid == uid)
+            .filter(or_(ChatSessionSchema.delete_at.is_(None), datetime.now() < ChatSessionSchema.delete_at))
         )
         result = query.first()
 
@@ -249,9 +249,16 @@ async def get_session(sessionname: str, info: Tuple[int, int] = Depends(jwt_auth
         for history in data["history"]:
             r.rpush(f"{uid}{sessionname}:usermessage", history["usermessage"])
             r.rpush(f"{uid}{sessionname}:botmessage", history["botmessage"])
-            if history["llm_model"]: r.set(f"{uid}{sessionname}llm_model", history["llm_model"])
-            if history["user_api_key"]: r.set(f"{uid}{sessionname}user_api_key", history["user_api_key"])
-            if history["user_base_url"]: r.set(f"{uid}{sessionname}user_base_url", history["user_base_url"])
+            if history["llm_model"]: 
+                r.set(f"{uid}{sessionname}llm_model", history["llm_model"])
+
+            if history["user_api_key"]: 
+                r.set(f"{uid}{sessionname}user_api_key", history["user_api_key"])
+                r.set(f"uid:{uid}api_key", history["user_api_key"])
+                
+            if history["user_base_url"]: 
+                r.set(f"{uid}{sessionname}user_base_url", history["user_base_url"])
+                r.set(f"uid:{uid}base_url", history["user_base_url"])
 
     logger.info(f"llm_model:{r.get(f'{uid}{sessionname}llm_model')},user_api_key:{r.get(f'{uid}{sessionname}user_api_key')},user_base_url:{r.get(f'{uid}{sessionname}user_base_url')}")
 
@@ -270,6 +277,9 @@ async def post_user_message(sessionname: str, req : ChatRequest, request:Request
     user_api_key = r.get(f"{uid}{sessionname}user_api_key") if req.api_key == "" else req.api_key
     user_base_url = r.get(f"{uid}{sessionname}user_base_url") if req.base_url == "" else req.base_url
 
+    r.set(f"uid:{uid}api_key", user_api_key)
+    r.set(f"uid:{uid}base_url", user_base_url)
+
     client_ip  = request.client.host
 
     with session() as conn:
@@ -280,10 +290,10 @@ async def post_user_message(sessionname: str, req : ChatRequest, request:Request
             conn.commit()
 
         query=(
-            conn.query(SessionSchema.sid,SessionSchema.sessionname, SessionSchema.create_at, SessionSchema.update_at)
-            .filter(SessionSchema.sessionname == sessionname)
-            .filter(SessionSchema.uid == uid)
-            .filter(or_(SessionSchema.delete_at.is_(None), datetime.now() < SessionSchema.delete_at))
+            conn.query(ChatSessionSchema.sid,ChatSessionSchema.sessionname, ChatSessionSchema.create_at, ChatSessionSchema.update_at)
+            .filter(ChatSessionSchema.sessionname == sessionname)
+            .filter(ChatSessionSchema.uid == uid)
+            .filter(or_(ChatSessionSchema.delete_at.is_(None), datetime.now() < ChatSessionSchema.delete_at))
         )
         result = query.first()
         session_id = result.sid

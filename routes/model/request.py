@@ -37,3 +37,5 @@ class ChatRequest(BaseModel):
     base_url: str
     message: str
     vdb_name: str | None = None
+
+

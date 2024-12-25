@@ -3,7 +3,7 @@ from .users import UserSchema
 from datetime import datetime
 from sqlalchemy import Boolean, Column, DateTime, ForeignKey, Integer, String
 
-class SessionSchema(BaseSchema):
+class ChatSessionSchema(BaseSchema):
     __tablename__ = "session"
     sid: int = Column(Integer, primary_key=True, autoincrement=True)
     uid: int = Column(Integer, ForeignKey(UserSchema.uid, ondelete="CASCADE"), nullable=False)

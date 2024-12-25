@@ -234,7 +234,7 @@
 		  ],
 		  "body": {
 			"mode": "raw",
-			"raw": "{\n    \"llm_model\": \"gpt-4o-mini\",\n    \"temperature\": 0.7,\n    \"api_key\": \"sk-SrkteYrb62PmPt0Lo5yyGCaAVSmWlb5zzgiqJ5skf965G4Mr\",\n    \"base_url\": \"https://api.openai-proxy.org/v1\",\n    \"message\": \"你好,我的九个室友是谁\",\n    \"vdb_name\": \"testvdb\"\n}"
+			"raw": "{\n    \"llm_model\": \"gpt-4o-mini\",\n    \"temperature\": 0.7,\n    \"api_key\": \"{{api_key}}\",\n    \"base_url\": \"https://api.openai-proxy.org/v1\",\n    \"message\": \"你好,我的九个室友是谁\",\n    \"vdb_name\": \"testvdb\"\n}"
 		  },
 		  "url": {
 			"raw": "http://localhost:8000/v1/session/newsession/chat",
@@ -282,7 +282,7 @@
 			  },
 			  {
 				"key": "api_key",
-				"value": "sk-SrkteYrb62PmPt0Lo5yyGCaAVSmWlb5zzgiqJ5skf965G4Mr",
+				"value": "{{api_key}}",
 				"type": "text"
 			  },
 			  {

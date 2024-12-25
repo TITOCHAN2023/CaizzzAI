@@ -74,7 +74,7 @@ def extract_text_from_file_cpu(filepath,ext):
         
         return text
     else:
-        print(f"Unsupported file type: {ext}")
+        logger.info(f"Unsupported file type: {ext}")
         return None
 
 
@@ -89,3 +89,4 @@ def load_and_split_documents(file_path):
     documents = [Document(page_content=t, metadata={"source": file_path}) for t in texts]
 
     return documents
+
