@@ -219,7 +219,7 @@ def body_bg():
         if voice_on:
             st.session_state['voice'] = "Person2"
             voice_name=st.sidebar.text_input("voice name", key="voice")
-            if st.sidebar.button("Change voice"):
+            if voice_name:
                 st.session_state['voice'] = voice_name
             st.sidebar.write("for example: Person1, Person2, Person3")
 
