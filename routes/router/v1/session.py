@@ -121,6 +121,7 @@ async def create_session(request: CreateSessionRequest,info: Tuple[int, int] = D
         conn.add(_session)
         conn.commit()
 
+        r.lpush(f"{uid}_session_list", request.sessionname)
         data = {"sessionname": _session.sessionname, "create_at": _session.create_at}
 
 
