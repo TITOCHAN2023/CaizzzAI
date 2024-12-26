@@ -217,7 +217,10 @@ def body_bg():
         
         voice_on = st.sidebar.toggle("Voice", False)
         if voice_on:
-            st.session_state['voice'] = st.sidebar.text_input("voice name", key="voice",default="Person1")
+            st.session_state['voice'] = "Person2"
+            voice_name=st.sidebar.text_input("voice name", key="voice")
+            if st.sidebar.button("Change voice"):
+                st.session_state['voice'] = voice_name
             st.sidebar.write("for example: Person1, Person2, Person3")
 
         # Main chat interface
