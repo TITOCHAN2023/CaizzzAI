@@ -55,7 +55,7 @@ def siderbar():
     st.sidebar.markdown("### use chat's api_key and base_url")
     st.sidebar.markdown("login in chat page first")
 
-    uploaded_file = st.sidebar.file_uploader("choose ur own voice ", type=[".mp3", ".wav"])
+    uploaded_file = st.sidebar.file_uploader("choose ur own voice (5s-15s)", type=[".mp3", ".wav"])
     voice_name = st.sidebar.text_input("voice name (make it as a password)", key="voice_name")
     
     if st.sidebar.button("upload"):
