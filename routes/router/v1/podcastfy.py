@@ -60,13 +60,6 @@ async def upload_files(files: List[UploadFile], sessionname: str,uid:int) :
 
     from middleware.podcastfy.client import generate_podcast
     from env import OPENAI_API_KEY,OPENAI_BASE_URL
-    # if not base_url or not api_key:
-    #     if r.exists(f"uid:{uid}api_key"):
-    #         api_key = r.get(f"uid:{uid}api_key")
-    #     if r.exists(f"uid:{uid}base_url"):
-    #         base_url = r.get(f"uid:{uid}base_url")
-    #     else:
-    #         #raise HTTPException(status_code=400, detail="base_url and api_key required")
     api_key=OPENAI_API_KEY
     base_url=OPENAI_BASE_URL
 

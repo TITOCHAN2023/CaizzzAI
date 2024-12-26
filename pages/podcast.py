@@ -99,7 +99,7 @@ def body():
     
     sessionname=st.text_input("Session Name", key="session_name_input")
 
-    if st.button("上传文件"):
+    if st.button("Upload File"):
         st.write(f"Session Name: {sessionname} llm_model: {st.session_state['llm_model']} base_url: {st.session_state['base_url']} api_key: {st.session_state['api_key']}")
         if uploaded_file is not None  and sessionname:
 

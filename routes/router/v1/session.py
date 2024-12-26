@@ -180,6 +180,8 @@ async def get_session(sessionname: str, info: Tuple[int, int] = Depends(jwt_auth
         llm_model = r.get(f"{uid}{sessionname}llm_model")
         user_api_key = r.get(f"{uid}{sessionname}user_api_key")
         user_base_url = r.get(f"{uid}{sessionname}user_base_url")
+        
+        
         data = {
             "sessionname": sessionname,
             "create_at": "",
@@ -197,6 +199,8 @@ async def get_session(sessionname: str, info: Tuple[int, int] = Depends(jwt_auth
                 for i in range(len(usermessage))
             ]
         }
+        r.set(f"{uid}_api_key", str(user_api_key))
+        r.set(f"{uid}_base_url", str(user_base_url))
         return StandardResponse(code=0, status="success", data=data)
 
     with session() as conn:
@@ -254,11 +258,9 @@ async def get_session(sessionname: str, info: Tuple[int, int] = Depends(jwt_auth
 
             if history["user_api_key"]: 
                 r.set(f"{uid}{sessionname}user_api_key", history["user_api_key"])
-                r.set(f"uid:{uid}api_key", history["user_api_key"])
-                
+
             if history["user_base_url"]: 
                 r.set(f"{uid}{sessionname}user_base_url", history["user_base_url"])
-                r.set(f"uid:{uid}base_url", history["user_base_url"])
 
     logger.info(f"llm_model:{r.get(f'{uid}{sessionname}llm_model')},user_api_key:{r.get(f'{uid}{sessionname}user_api_key')},user_base_url:{r.get(f'{uid}{sessionname}user_base_url')}")
 
@@ -276,9 +278,6 @@ async def post_user_message(sessionname: str, req : ChatRequest, request:Request
 
     user_api_key = r.get(f"{uid}{sessionname}user_api_key") if req.api_key == "" else req.api_key
     user_base_url = r.get(f"{uid}{sessionname}user_base_url") if req.base_url == "" else req.base_url
-
-    r.set(f"uid:{uid}api_key", user_api_key)
-    r.set(f"uid:{uid}base_url", user_base_url)
 
     client_ip  = request.client.host
 
@@ -323,7 +322,7 @@ async def post_user_message(sessionname: str, req : ChatRequest, request:Request
 
             context = "\n\n".join(relevant_docs)
 
-            input_message = f"根据以下文档回答问题：\n{context}\n\n问题：{req.message}\n回答："
+            input_message = f"根据以下文档回复:\n{context}\n\n\nUser:{req.message}\n"
         try:
             for chunk in chain.stream({"input": input_message}):
                 content = chunk.content

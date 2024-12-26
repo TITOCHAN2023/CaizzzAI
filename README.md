@@ -96,3 +96,6 @@ nohup streamlit run streamlit_app.py --server.enableCORS false --server.port 850
 
 ```
 
+add podcastfy in my project (thx to podcastfy.ai)
+
+add TTS in my project (thx to F5-TTS)
