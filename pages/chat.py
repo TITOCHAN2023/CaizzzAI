@@ -217,7 +217,8 @@ def body_bg():
         
         voice_on = st.sidebar.toggle("Voice", False)
         if voice_on:
-            st.session_state['voice'] = st.sidebar.selectbox("Select Voice", ["Person1", "Person2", "Person3", "Person4"])
+            st.session_state['voice'] = st.sidebar.text_input("voice name", key="voice")
+            st.sidebar.write("for example: Person1, Person2, Person3")
 
         # Main chat interface
         st.title("💬 CaizzzAI")
