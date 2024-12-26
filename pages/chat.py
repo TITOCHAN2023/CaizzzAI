@@ -216,12 +216,14 @@ def body_bg():
                             status.update(label="Upload complete!", state="complete", expanded=False)
         
         voice_on = st.sidebar.toggle("Voice", False)
+
+        voice_name=st.sidebar.text_input("voice name", key="voice")
         if voice_on:
-            st.session_state['voice'] = "Person2"
-            voice_name=st.sidebar.text_input("voice name", key="voice")
-            if voice_name:
-                st.session_state['voice'] = voice_name
+            if not voice_name or voice_name == "":
+                voice_on = False
+                st.sidebar.error("Please enter a voice name and retry")
             st.sidebar.write("for example: Person1, Person2, Person3")
+            st.sidebar.write("U can upload your own voice in text2sound")
 
         # Main chat interface
         st.title("💬 CaizzzAI")
@@ -231,10 +233,9 @@ def body_bg():
             st.chat_message("user", avatar=st.session_state['avatar']).write(usermessage)
             st.chat_message("assistant", avatar=st.session_state["assistant"]).write(botmessage)
             if voice_on:
-                voice = st.session_state.get('voice', 'Person3')
                 
                 requestsdata = {
-                    "voicename": voice,
+                    "voicename": voice_name,
                     "content": botmessage,
                 }
                 response = requests.post(tts_url, data=requestsdata)
@@ -279,10 +280,8 @@ def body_bg():
 
             st.chat_message("assistant", avatar=st.session_state["assistant"]).write(bot_response)
             if voice_on:
-                voice = st.session_state.get('voice', 'Person3')
-                
                 requestsdata = {
-                    "voicename": voice,
+                    "voicename": voice_name,
                     "content": bot_response,
                 }
                 response = requests.post(tts_url, data=requestsdata)
