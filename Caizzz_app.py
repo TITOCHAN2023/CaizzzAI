@@ -2,6 +2,7 @@ import streamlit as st
 
 
 def main():
+    
     st.switch_page("pages/chat.py")
 
 

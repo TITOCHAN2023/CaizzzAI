@@ -3,8 +3,10 @@ import streamlit as st
 import requests
 import json
 
-from env import TTS_URL
-tts_url=TTS_URL
+from dotenv import load_dotenv
+import os
+load_dotenv()
+tts_url = os.environ.get("TTS_URL")
 
 allowed_extensions = [".txt", ".pdf", ".docx", ".xlsx",".htm","html"]
 

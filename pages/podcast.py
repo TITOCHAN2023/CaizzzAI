@@ -1,8 +1,10 @@
 import streamlit as st
 import requests
 
-from env import TTS_URL
-tts_url=TTS_URL
+from dotenv import load_dotenv
+import os
+load_dotenv()
+tts_url = os.environ.get("TTS_URL")
 
 
 _IP = "localhost"
@@ -49,6 +51,8 @@ def config():
     headers= {"Authorization": st.session_state['token']}
     st.title("CaizzzAI-Podcast")
     st.write("ONLY FOR TEST not open yet")
+
+    
 
 
 def siderbar():
