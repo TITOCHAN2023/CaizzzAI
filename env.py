@@ -45,7 +45,7 @@ API_PORT = int(os.environ.get("API_PORT", "8000"))
 REDIS_HOST = os.environ.get("REDIS_HOST")
 REDIS_PORT = int(os.environ.get("REDIS_PORT", "6379"))
 REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD")
-
+REDIS_FLUSH=os.environ.get("REDIS_FLUSH",None)
 
 
 JWT_TOKEN_SECRET = os.environ.get("JWT_TOKEN_SECRET")

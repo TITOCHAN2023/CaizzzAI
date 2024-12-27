@@ -1,6 +1,6 @@
 from redis import Redis
 
-from env import REDIS_HOST, REDIS_PASSWORD, REDIS_PORT
+from env import REDIS_HOST, REDIS_PASSWORD, REDIS_PORT ,REDIS_FLUSH
 from logger import logger
 
 
@@ -11,7 +11,8 @@ def init_redis() -> Redis:
     if not pong:
         raise ConnectionError(f"Redis connection failed: {pong}")
     logger.info("Init redis successfully")
-    r.flushdb()
+    if REDIS_FLUSH:
+        r.flushdb()
     return r
 
 
