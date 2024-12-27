@@ -92,10 +92,10 @@ then, u could start with this code
 
 nohup uvicorn main:app --reload --env-file .env > uvicorn.log 2>&1 &
 
-nohup streamlit run streamlit_app.py --server.enableCORS false --server.port 8502 --server.enableXsrfProtection false --server.baseUrlPath "gpt" > streamlit.log 2>&1 &
+nohup streamlit run Caizzz_app.py --server.enableCORS false --server.port 8502 --server.enableXsrfProtection false --server.baseUrlPath "gpt" > streamlit.log 2>&1 &
 
 ```
 
 add podcastfy in my project (thx to podcastfy.ai)
 
-add TTS in my project (thx to F5-TTS)
+add TTS in my project (thx to F5-TTS、GPT-SoVITS)

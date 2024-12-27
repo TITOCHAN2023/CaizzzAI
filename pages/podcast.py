@@ -155,7 +155,18 @@ def body():
         
 
 def main():
-
+    # Page configuration
+    st.set_page_config(
+        page_title="CaizzzAI-ONLY FOR TEST not open yet",
+        page_icon="static/img/logo.png",
+        layout="centered",
+        initial_sidebar_state="expanded",
+        menu_items={
+            "Get Help": "https://github.com/TITOCHAN2023/CaizzzAI/README.md",
+            "Report a bug": "https://github.com/TITOCHAN2023/CaizzzAI/issues/new",
+            "About": ABOUT,
+        },
+    )
     if 'token' not in st.session_state:
         st.switch_page("pages/chat.py")
     config()
