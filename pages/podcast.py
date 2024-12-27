@@ -138,14 +138,14 @@ def body():
                 }
             response = requests.post(tts_url, data=requestsdata)
             jsonresponse1 = response.json()
-            #st.audio(jsonresponse1['url'])
-            html_code = f"""
-                <audio controls style="width: 100%;">
-                <source src="{jsonresponse1['url']}" type="audio/wav">
-                Your browser does not support the audio element.
-                </audio>
-                """
-            components.html(html_code)
+            st.audio(jsonresponse1['url'])
+            # html_code = f"""
+            #     <audio controls style="width: 100%;">
+            #     <source src="{jsonresponse1['url']}" type="audio/wav">
+            #     Your browser does not support the audio element.
+            #     </audio>
+            #     """
+            # components.html(html_code)
 
 
             st.markdown(f"### Person2: ")
@@ -156,14 +156,14 @@ def body():
                 }
             response = requests.post(tts_url, data=requestsdata)
             jsonresponse2 = response.json()
-            #st.audio(jsonresponse2['url'])
-            html_code = f"""
-                <audio controls style="width: 100%;">
-                <source src="{jsonresponse2['url']}" type="audio/wav">
-                Your browser does not support the audio element.
-                </audio>
-                """
-            components.html(html_code)
+            st.audio(jsonresponse2['url'])
+            # html_code = f"""
+            #     <audio controls style="width: 100%;">
+            #     <source src="{jsonresponse2['url']}" type="audio/wav">
+            #     Your browser does not support the audio element.
+            #     </audio>
+            #     """
+            # components.html(html_code)
 
 
 

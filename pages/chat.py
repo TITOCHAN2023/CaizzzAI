@@ -230,15 +230,15 @@ def body_bg():
                 response = requests.post(tts_url, data=requestsdata)
 
                 jsonresponse1 = response.json()
-                # st.audio(jsonresponse1['url'])
-                html_code = f"""
-                <audio controls style="width: 100%;">
-                <source src="{jsonresponse1['url']}" type="audio/wav">
-                Your browser does not support the audio element.
-                </audio>
-                """
+                st.audio(jsonresponse1['url'])
+                # html_code = f"""
+                # <audio controls style="width: 100%;">
+                # <source src="{jsonresponse1['url']}" type="audio/wav">
+                # Your browser does not support the audio element.
+                # </audio>
+                # """
 
-                components.html(html_code)
+                # components.html(html_code)
             
 
         if user_input := st.chat_input():
@@ -284,16 +284,16 @@ def body_bg():
                 response = requests.post(tts_url, data=requestsdata)
 
                 jsonresponse1 = response.json()
-                # st.audio(jsonresponse1['url'])
+                st.audio(jsonresponse1['url'])
 
-                html_code = f"""
-                <audio controls style="width: 100%;">
-                <source src="{jsonresponse1['url']}" type="audio/wav">
-                Your browser does not support the audio element.
-                </audio>
-                """
+                # html_code = f"""
+                # <audio controls style="width: 100%;">
+                # <source src="{jsonresponse1['url']}" type="audio/wav">
+                # Your browser does not support the audio element.
+                # </audio>
+                # """
 
-                components.html(html_code)
+                # components.html(html_code)
 
 
 
