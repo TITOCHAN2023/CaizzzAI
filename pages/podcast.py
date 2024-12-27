@@ -7,9 +7,8 @@ import os
 load_dotenv()
 tts_url = os.environ.get("TTS_URL")
 
-
-_IP = "localhost"
-_PORT = 8000
+_IP = os.environ.get("API_HOST")
+_PORT = os.environ.get("API_PORT")
 ABOUT = """\
 ### CaizzzAI is a project of providing private llm api and webui service
 #### Author: [Caizzz](https://titochan.top)

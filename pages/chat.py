@@ -11,8 +11,8 @@ tts_url = os.environ.get("TTS_URL")
 allowed_extensions = [".txt", ".pdf", ".docx", ".xlsx",".htm","html"]
 
 
-_IP = "localhost"
-_PORT = 8000
+_IP = os.environ.get("API_HOST")
+_PORT = os.environ.get("API_PORT")
 ABOUT = """\
 ### CaizzzAI is a project of providing private llm api and webui service
 #### Author: [Caizzz](https://titochan.top)
