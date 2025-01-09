@@ -5,12 +5,12 @@ import streamlit.components.v1 as components
 from dotenv import load_dotenv
 import os
 load_dotenv()
-tts_url = os.environ.get("TTS_URL")
 
-
-
+tts_urls = str(os.environ.get("TTS_URLS")).split(',')
+tts_url = tts_urls[0]
 _IP = os.environ.get("API_HOST")
 _PORT = os.environ.get("API_PORT")
+server_url = f"http://{_IP}:{_PORT}"
 ABOUT = """\
 ### CaizzzAI is a project of providing private llm api and webui service
 #### Author: [Caizzz](https://titochan.top)
@@ -88,15 +88,17 @@ def body():
     if st.button("Generate Sound"):
         if 'token' in st.session_state:
 
-            st.markdown(f"### Person1: ")
             st.markdown(f" {text}")
             requestsdata = {
                     "voicename": voice_1,
                     "content": text,
                 }
-            response = requests.post(tts_url, data=requestsdata)
-            jsonresponse1 = response.json()
-            st.audio(jsonresponse1['url'])
+            response = requests.post(f'{server_url}/v1/audio',headers=headers, json=requestsdata)
+            if response.status_code == 200:
+                jsonresponse1 = response.json()
+                st.audio(jsonresponse1['data']['audio_url'])
+            else:
+                st.write("error: ",response.text,f'{server_url}/v1/audio')
             # html_code = f"""
             #     <audio controls style="width: 100%;">
             #     <source src="{jsonresponse1['url']}" type="audio/wav">

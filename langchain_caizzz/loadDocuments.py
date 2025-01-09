@@ -12,6 +12,8 @@ from uuid import uuid4
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from env import SERVER
 
+from logger import logger
+
 def extract_text_from_file(filepath):
 
     ext = os.path.splitext(filepath)[-1].lower()
@@ -24,15 +26,7 @@ def extract_text_from_file(filepath):
 def extract_text_from_file_gpu(filepath,ext):
 
 
-    from middleware.content_parser import pdfloader
-
-    
-    if ext == ".pdf":
-
-        """HorYiny here u could help me (file could be png pdf ...)"""
-
-    else:
-        return extract_text_from_file_cpu(filepath,ext) #if can't use gpu, use cpu instead
+    return extract_text_from_file_cpu(filepath,ext) #if can't use gpu, use cpu instead
 
 
 

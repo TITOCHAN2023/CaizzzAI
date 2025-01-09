@@ -30,7 +30,6 @@ from env import UPLOAD_FILES_MAX_SIZE,PODCASTPOSITION,TTS_URL,allowed_extensions
 podcast_router = APIRouter(prefix="/podcast", tags=["podcast"])
 
 
-tts_url=TTS_URL
 position=PODCASTPOSITION
 
 
@@ -187,7 +186,7 @@ async def upload_file_podcast(
 
 '''get podcast session list'''
 @podcast_router.get("/sessionlist", response_model=StandardResponse, dependencies=[Depends(jwt_auth)])
-async def get_session(page_id:int,page_size:int,info: Tuple[int, int] = Depends(jwt_auth)) -> StandardResponse:
+async def get_session_list(page_id:int,page_size:int,info: Tuple[int, int] = Depends(jwt_auth)) -> StandardResponse:
     uid,_=info
     logger.info(f"uid:{uid},page_id:{page_id},page_size:{page_size}")
 
@@ -241,7 +240,7 @@ async def get_session(page_id:int,page_size:int,info: Tuple[int, int] = Depends(
 
 '''get podcast session history'''
 @podcast_router.get("/{sessionname}", response_model=StandardResponse, dependencies=[Depends(jwt_auth)])
-async def get_session(sessionname: str, info: Tuple[int, int] = Depends(jwt_auth)):
+async def get_session_history(sessionname: str, info: Tuple[int, int] = Depends(jwt_auth)):
     uid, _ = info
 
     if r.exists(f"{uid}{sessionname}:podcast_message"):

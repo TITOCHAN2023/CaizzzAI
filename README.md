@@ -99,3 +99,7 @@ nohup streamlit run Caizzz_app.py --server.enableCORS false --server.port 8502 -
 add podcastfy in my project (thx to podcastfy.ai)
 
 add TTS in my project (thx to F5-TTS、GPT-SoVITS)
+
+Use whisper to build up ur STT server (CUDA)
+
+```docker run --gpus=all --publish 8xxx:8000 --volume ~/.cache/huggingface:/root/.cache/huggingface --detach fedirz/faster-whisper-server:latest-cuda```

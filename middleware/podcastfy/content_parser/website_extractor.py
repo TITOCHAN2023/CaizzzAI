@@ -11,7 +11,7 @@ import html
 import logging
 from urllib.parse import urlparse
 from bs4 import BeautifulSoup
-from podcastfy.utils.config import load_config
+from middleware.podcastfy.utils.config import load_config
 from typing import List
 
 from logger import logger

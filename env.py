@@ -1,12 +1,12 @@
 import os
 
-
 allowed_extensions = [".txt", ".pdf", ".docx", ".xlsx",".htm","html"]
 public_vdb_list=["SZTU公共知识库"]
-TTS_URL=os.environ.get("TTS_URL")
+TTS_URL=str(os.environ.get("TTS_URLS")).split(',')
 PODCASTPOSITION=os.environ.get("PODCASTPOSITION")
 
 SERVER=eval(os.environ.get("SERVER","0"))
+SERVER_URL=os.environ.get("SERVER_URL")
 
 
 LOGGER_LEVEL = os.environ.get("LOGGER_LEVEL", "INFO")

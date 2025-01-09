@@ -5,10 +5,13 @@ import streamlit.components.v1 as components
 from dotenv import load_dotenv
 import os
 load_dotenv()
-tts_url = os.environ.get("TTS_URL")
+
+tts_urls = str(os.environ.get("TTS_URLS")).split(',')
+tts_url = tts_urls[0]
 
 _IP = os.environ.get("API_HOST")
 _PORT = os.environ.get("API_PORT")
+server_url = f"http://{_IP}:{_PORT}"
 ABOUT = """\
 ### CaizzzAI is a project of providing private llm api and webui service
 #### Author: [Caizzz](https://titochan.top)
@@ -62,7 +65,7 @@ def siderbar():
 
 def body():
     # 创建文件上传组件
-    uploaded_file = st.file_uploader("选择一个文件", type=[".txt", ".pdf", ".docx", ".xlsx",".htm","html"])
+    uploaded_file = st.file_uploader("Choose a file, wait some minutes for generating", type=[".txt", ".pdf", ".docx", ".xlsx",".htm","html"])
 
     
 
@@ -135,16 +138,9 @@ def body():
                     "voicename": voice_1,
                     "content": message[0],
                 }
-            response = requests.post(tts_url, data=requestsdata)
+            response = requests.post(f'{server_url}/v1/audio',headers=headers, json=requestsdata)
             jsonresponse1 = response.json()
-            st.audio(jsonresponse1['url'])
-            # html_code = f"""
-            #     <audio controls style="width: 100%;">
-            #     <source src="{jsonresponse1['url']}" type="audio/wav">
-            #     Your browser does not support the audio element.
-            #     </audio>
-            #     """
-            # components.html(html_code)
+            st.audio(jsonresponse1['data']['audio_url'])
 
 
             st.markdown(f"### Person2: ")
@@ -153,16 +149,9 @@ def body():
                     "voicename": voice_2,
                     "content": message[1],
                 }
-            response = requests.post(tts_url, data=requestsdata)
+            response = requests.post(f'{server_url}/v1/audio',headers=headers, json=requestsdata)
             jsonresponse2 = response.json()
-            st.audio(jsonresponse2['url'])
-            # html_code = f"""
-            #     <audio controls style="width: 100%;">
-            #     <source src="{jsonresponse2['url']}" type="audio/wav">
-            #     Your browser does not support the audio element.
-            #     </audio>
-            #     """
-            # components.html(html_code)
+            st.audio(jsonresponse2['data']['audio_url'])
 
 
 

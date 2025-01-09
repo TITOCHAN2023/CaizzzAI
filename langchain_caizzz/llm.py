@@ -8,6 +8,7 @@ from env import OPENAI_BASE_URL,OPENAI_LLM_MODEL
 def init_llm(llm_name: str, base_url: str, api_key: str, temperature: str, llm_class: str = "openai", **kwargs):
     """Init LLM."""
 
+    '''openai'''
     if llm_class == "openai":
 
         kwargs.update({"verbose": True, "streaming": True})
@@ -25,8 +26,16 @@ def init_llm(llm_name: str, base_url: str, api_key: str, temperature: str, llm_c
             temperature=temperature,
             **kwargs,
         )
-    elif llm_class == "ollama":
 
+
+    '''ollama'''
+    if llm_class == "ollama":
+
+        if base_url=="":
+            base_url="127.0.0.1:11434"
+        if llm_name=="":
+            llm_name="c14q4"
+            
         llm = ChatOllama(
             model=llm_name,
             base_url=base_url,

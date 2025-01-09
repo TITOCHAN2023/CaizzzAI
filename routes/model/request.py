@@ -38,4 +38,7 @@ class ChatRequest(BaseModel):
     message: str
     vdb_name: str | None = None
 
-
+class TTSRequest(BaseModel):
+    voicename: str
+    content: str
+    tts_class: str = "F5-TTS"
