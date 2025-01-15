@@ -25,6 +25,8 @@ async def generate_audio(req:TTSRequest, info: Tuple[int, int] = Depends(jwt_aut
         logger.error("text is empty")
         raise HTTPException(status_code=400, detail="text is empty")
     
+    
+    
     if r.hexists(name=f"audio_{uid}",key=req.voicename+req.content):
         tts_url = r.hget(name=f"audio_{uid}",key=req.voicename+req.content)
         return StandardResponse(

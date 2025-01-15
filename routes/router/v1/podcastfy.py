@@ -147,6 +147,8 @@ async def upload_file_podcast(
         logger.error(f"Error creating session: {str(e)}")
 
     try:
+
+        r.rpush(f"{uid}_session_list_podcast", sessionname)
         transcript =await upload_files([file], sessionname, uid)
     except Exception as e:
         logger.error(f"Error uploading file: {str(e)}")
@@ -177,7 +179,6 @@ async def upload_file_podcast(
         ]
     }
 
-    r.rpush(f"{uid}_session_list_podcast", sessionname)
     r.set(f"{uid}{sessionname}:podcast_message", json.dumps(data))
     return StandardResponse(code=0, status="success", data=data)
     
