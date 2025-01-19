@@ -10,6 +10,8 @@ from PIL import Image
 from langchain_core.documents.base import Document
 from uuid import uuid4
 from langchain_text_splitters import RecursiveCharacterTextSplitter
+from middleware.podcastfy.content_parser.content_extractor import ContentExtractor
+
 from env import SERVER
 
 from logger import logger
@@ -17,18 +19,8 @@ from logger import logger
 def extract_text_from_file(filepath):
 
     ext = os.path.splitext(filepath)[-1].lower()
-    if not SERVER:
-        return extract_text_from_file_cpu(filepath,ext)
-    else:
-        return extract_text_from_file_gpu(filepath,ext)
+    return extract_text_from_file_cpu(filepath,ext)
     
-
-def extract_text_from_file_gpu(filepath,ext):
-
-
-    return extract_text_from_file_cpu(filepath,ext) #if can't use gpu, use cpu instead
-
-
 
 
 
@@ -72,15 +64,4 @@ def extract_text_from_file_cpu(filepath,ext):
         return None
 
 
-
-def load_and_split_documents(file_path):
-    content = extract_text_from_file(file_path)
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=500,
-        chunk_overlap=50
-    )
-    texts = text_splitter.split_text(content)
-    documents = [Document(page_content=t, metadata={"source": file_path}) for t in texts]
-
-    return documents
 

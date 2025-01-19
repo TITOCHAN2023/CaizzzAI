@@ -308,7 +308,9 @@ async def post_user_message(sessionname: str, req : ChatRequest, request:Request
         input_message = req.message
 
         if req.vdb_name:
-            
+
+            #此处可做问题生成多个问题 达到广覆盖
+
             hash_vdbname = hash_string(req.vdb_name)
             index_file_path = f"{FAISS_INDEX_PATH}/index/{str(uid)}/{hash_vdbname}.index"
             mapping_file_path = f"{FAISS_INDEX_PATH}/index/{str(uid)}/{hash_vdbname}_mapping.pkl"
@@ -318,6 +320,8 @@ async def post_user_message(sessionname: str, req : ChatRequest, request:Request
             vector_store = load_faiss_index(index_file_path, mapping_file_path, embeddings)
 
             results = vector_store.search(req.message, search_type="similarity", k=1)
+
+            #此处可调用重排模型 帮忙重排 如bge-rerank-v2-m3
 
             relevant_docs = [doc.page_content for doc in results]
 

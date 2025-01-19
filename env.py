@@ -4,6 +4,7 @@ allowed_extensions = [".txt", ".pdf", ".docx", ".xlsx",".htm","html"]
 public_vdb_list=["SZTU公共知识库"]
 TTS_URL=str(os.environ.get("TTS_URLS")).split(',')
 PODCASTPOSITION=os.environ.get("PODCASTPOSITION")
+TEXT_SPLITER_WAY=os.environ.get('TEXT_SPLITER_WAY')
 
 SERVER=eval(os.environ.get("SERVER","0"))
 SERVER_URL=os.environ.get("SERVER_URL")

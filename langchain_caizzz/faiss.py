@@ -8,7 +8,7 @@ from langchain_core.documents.base import Document
 from uuid import uuid4
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
-from langchain_caizzz.loadDocuments import load_and_split_documents
+from langchain_caizzz.splitText import load_and_split_documents
 
 from logger import logger
 
@@ -54,7 +54,7 @@ def update_vdb(index_file_path:str, mapping_file_path:str, directory_path:str, e
         for file in files:
             logger.info(f"Processing file: {file}")
             file_path = os.path.join(root, file)
-            documents = load_and_split_documents(file_path)
+            documents = load_and_split_documents(file_path,embeddings)
             uuids = [str(uuid4()) for _ in range(len(documents))]
             vector_store.add_documents(documents=documents, ids=uuids)
 

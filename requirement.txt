@@ -5,6 +5,7 @@ loguru
 langchain
 langchain-community
 langchain-openai
+langchain_experimental
 redis
 werkzeug
 pymysql
