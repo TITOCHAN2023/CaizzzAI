@@ -159,8 +159,12 @@ async def delete_session(sessionname:str,info: Tuple[int, int] = Depends(jwt_aut
         res=query.first()
         if not res:
             raise HTTPException(status_code=404, detail="Session not found")
-        res.delete_at=datetime.datetime.now()
+        res.delete_at=datetime.now()
         conn.commit()
+
+        r.lrem(f"{uid}_session_list", 0, sessionname)
+        r.delete(f"{uid}{sessionname}:usermessage")
+        r.delete(f"{uid}{sessionname}:botmessage")
 
     return StandardResponse(code=0, status="success", message="Session deleted successfully")
 

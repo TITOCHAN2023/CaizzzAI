@@ -11,8 +11,7 @@ def init_redis() -> Redis:
     if not pong:
         raise ConnectionError(f"Redis connection failed: {pong}")
     logger.info("Init redis successfully")
-    if REDIS_FLUSH:
-        r.flushdb()
+    r.flushdb()
     return r
 
 

@@ -3,7 +3,7 @@ from langchain_core.documents.base import Document
 from langchain_caizzz.loadDocuments import extract_text_from_file
 from langchain_experimental.text_splitter import SemanticChunker
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from embedding import init_embedding
+from .embedding import init_embedding
 
 
 def load_and_split_documents(file_path,embeddings,text_spliter_way:str ="fast"):

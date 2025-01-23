@@ -5,7 +5,8 @@ from typing import Tuple
 
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import FileResponse
-from sqlalchemy import or_
+from middleware.mysql.models.audio_position import audioPositionSchema
+from middleware.mysql import session
 
 from env import TTS_URL, SERVER_URL
 from langchain_caizzz.tts import tts
@@ -35,7 +36,16 @@ async def generate_audio(req:TTSRequest, info: Tuple[int, int] = Depends(jwt_aut
             message="audio",
             data={"audio_url": tts_url},
         )
-
+    with session() as conn:
+        audio_position = conn.query(audioPositionSchema.audio_position).filter(audioPositionSchema.uid == uid,audioPositionSchema.audio_content==req.content).first()
+        if audio_position:
+            return StandardResponse(
+                code=0,
+                status="success",
+                message="audio",
+                data={"audio_url": audio_position},
+            )
+        
     tts_class = req.tts_class.upper()
     try:
         tts_url =tts(
@@ -50,6 +60,14 @@ async def generate_audio(req:TTSRequest, info: Tuple[int, int] = Depends(jwt_aut
         raise HTTPException(status_code=500, detail="Internal Server Error")
     
     r.hset(name=f"audio_{uid}",key=req.voicename+req.content,value=tts_url)
+    with session() as conn:
+        new_audio_position = audioPositionSchema(
+            audio_content=req.content,
+            audio_position=tts_url,
+            uid=uid
+        )
+        conn.add(new_audio_position)
+        conn.commit()
 
     return StandardResponse(
         code=0,

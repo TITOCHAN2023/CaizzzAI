@@ -6,8 +6,11 @@ from .chat_session import ChatSessionSchema
 from .history import historySchema
 from .VectorDB import VectorDBSchema
 
+
 from .podcastfy_conversation import PodcastfyConversationSchema
 from .podcastfy_session import PodcastfySessionSchema
+
+from .audio_position import audioPositionSchema
 
 __all__ = [
     "BaseSchema",
@@ -20,5 +23,5 @@ __all__ = [
     
     "PodcastfyConversationSchema",
     "PodcastfySessionSchema",
-    
+    "audio_position",
 ]

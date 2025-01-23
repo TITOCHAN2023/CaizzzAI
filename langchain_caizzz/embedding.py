@@ -22,5 +22,6 @@ def init_embedding(embeddings_name: str, base_url: str, api_key: str,**kwargs) -
         **kwargs
     )
     
+    
     logger.debug(f"Init LLM: {embeddings.model}")
     return embeddings
