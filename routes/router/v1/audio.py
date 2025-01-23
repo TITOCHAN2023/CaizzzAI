@@ -37,7 +37,7 @@ async def generate_audio(req:TTSRequest, info: Tuple[int, int] = Depends(jwt_aut
             data={"audio_url": tts_url},
         )
     with session() as conn:
-        audio_position = conn.query(audioPositionSchema.audio_position).filter(audioPositionSchema.uid == uid,audioPositionSchema.audio_content==req.content).first()
+        audio_position = conn.query(audioPositionSchema.audio_position).filter(audioPositionSchema.uid == uid,audioPositionSchema.audio_content==req.voicename+req.content).first()
         if audio_position:
             return StandardResponse(
                 code=0,
@@ -62,7 +62,7 @@ async def generate_audio(req:TTSRequest, info: Tuple[int, int] = Depends(jwt_aut
     r.hset(name=f"audio_{uid}",key=req.voicename+req.content,value=tts_url)
     with session() as conn:
         new_audio_position = audioPositionSchema(
-            audio_content=req.content,
+            audio_content=req.voicename+req.content,
             audio_position=tts_url,
             uid=uid
         )
