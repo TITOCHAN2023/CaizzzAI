@@ -3,9 +3,9 @@ from typing import Dict
 from langchain_ollama  import ChatOllama
 from langchain_openai.chat_models import ChatOpenAI
 from logger import logger
-from env import OPENAI_BASE_URL,OPENAI_LLM_MODEL
+from env import OPENAI_BASE_URL,OPENAI_LLM_MODEL,DEEPSEEK_BASE_URL,DEEPSEEK_API_KEY,DEEPSEEK_MODEL
 
-def init_llm(llm_name: str, base_url: str, api_key: str, temperature: str, llm_class: str = "openai", **kwargs):
+def init_llm(llm_name: str, base_url: str, api_key: str, temperature: str, llm_class: str = "deepseek", **kwargs):
     """Init LLM."""
 
     '''openai'''
@@ -27,6 +27,23 @@ def init_llm(llm_name: str, base_url: str, api_key: str, temperature: str, llm_c
             **kwargs,
         )
 
+    '''deepseek'''
+    if llm_class == "deepseek":
+
+        kwargs.update({"verbose": True, "streaming": True})
+        base_url=DEEPSEEK_BASE_URL
+        llm_name=DEEPSEEK_MODEL
+        api_key=DEEPSEEK_API_KEY
+        
+        logger.info(f"Init deepseek LLM: {llm_name},base_url:{base_url},api_key:{api_key},temperature:{temperature}")
+
+        llm= ChatOpenAI(
+            model=llm_name,
+            openai_api_base=base_url,
+            openai_api_key=api_key,
+            temperature=temperature,
+            **kwargs,
+        )
 
     '''ollama'''
     if llm_class == "ollama":

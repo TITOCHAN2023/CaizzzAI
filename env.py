@@ -8,6 +8,9 @@ TEXT_SPLITER_WAY=os.environ.get('TEXT_SPLITER_WAY')
 
 SERVER=eval(os.environ.get("SERVER","0"))
 SERVER_URL=os.environ.get("SERVER_URL")
+API_HOST = os.environ.get("API_HOST","localhost")
+API_PORT = int(os.environ.get("API_PORT", "8000"))
+DEBUG_MODE= os.environ.get("DEBUG_MODE", "False").lower() == "true"
 
 
 LOGGER_LEVEL = os.environ.get("LOGGER_LEVEL", "INFO")
@@ -31,15 +34,17 @@ MYSQL_USER = os.environ.get("MYSQL_USER")
 
 
 
+DEEPSEEK_BASE_URL = os.environ.get("DEEPSEEK_BASE_URL")
+DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY")
+DEEPSEEK_MODEL = os.environ.get("DEEPSEEK_MODEL")
+
+
 OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 OPENAI_LLM_MODEL = os.environ.get("OPENAI_LLM_MODEL")
 OPENAI_EMBEDDING_MODEL = os.environ.get("OPENAI_EMBEDDING_MODEL","text-embedding-3-small")
 
-DEBUG_MODE= os.environ.get("DEBUG_MODE", "False").lower() == "true"
 
-API_HOST = os.environ.get("API_HOST","localhost")
-API_PORT = int(os.environ.get("API_PORT", "8000"))
 
 
 
