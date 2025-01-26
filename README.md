@@ -1,7 +1,7 @@
 
 # CaizzzAI (Developing)
 
-CaizzzAI is an AI project utilizing Langchain, OpenAI, and FAISS to deliver high-touch services with AI-Chat and RAG, based on FAISS. The project is named after Isshiki Iroha's Chinese name--"Caiyu".
+CaizzzAI is an AI project utilizing Langchain, OpenAI, and FAISS to deliver high-touch services with AI-Chat and RAG, based on FAISS.
 
 ![CaizzzAI](static/img/image.png)
 
