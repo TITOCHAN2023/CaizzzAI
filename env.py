@@ -53,7 +53,7 @@ REDIS_PORT = int(os.environ.get("REDIS_PORT", "6379"))
 REDIS_PASSWORD = os.environ.get("REDIS_PASSWORD")
 REDIS_FLUSH=os.environ.get("REDIS_FLUSH",None)
 
-
+OTP_SECRET = os.environ.get("OTP_SECRET")
 JWT_TOKEN_SECRET = os.environ.get("JWT_TOKEN_SECRET")
 JWT_TOKEN_EXPIRE_TIME = eval(os.environ.get("JWT_TOKEN_EXPIRE_TIME", "3600 * 24 * 30"))
 JWT_TOKEN_ALGORITHM = os.environ.get("JWT_TOKEN_ALGORITHM", "HS256")

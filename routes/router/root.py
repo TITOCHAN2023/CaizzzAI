@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from middleware.jwt import encode_token
+from middleware.otp import generate_otp, verify_otp
 from middleware.mysql import session
 from middleware.mysql.models import UserSchema,ApiKeySchema
 from ..model.response import StandardResponse
@@ -7,12 +8,18 @@ from ..model.request import LoginRequest, RegisterRequest,ResetUserRequest
 from datetime import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
 from logger import logger
+from env import OTP_SECRET
+
+
+
 root_router = APIRouter(prefix="/root", tags=["root"])
 
     
 
 @root_router.get("/", tags=["root"])
 async def root() -> StandardResponse:
+    otp=generate_otp(OTP_SECRET)
+    logger.info("OTP code: "+otp)
     return StandardResponse(
         code=0,
         status="success",
@@ -54,6 +61,11 @@ def login(request: LoginRequest):
 
 @root_router.post("/register")
 def register(request: RegisterRequest):
+
+    # 验证OTP
+    if not verify_otp(OTP_SECRET, request.otp):
+        raise HTTPException(status_code=401, detail="验证码错误")
+
     with session() as conn:
         # 检查用户名是否已存在
         existing_user = conn.query(UserSchema).filter(UserSchema.username == request.username).first()
@@ -88,8 +100,8 @@ def reset_user(request:ResetUserRequest):
         if not user:
             raise HTTPException(status_code=401, detail="用户不存在")
     
-        if not check_password_hash(user.password_hash, request.originPassword):
-            raise HTTPException(status_code=401, detail="密码错误")
+        if not check_password_hash(user.password_hash, request.originPassword) or not verify_otp(OTP_SECRET, request.otp):
+            raise HTTPException(status_code=401, detail="密码或验证码错误")
             
         user.username=request.username
         user.password_hash=generate_password_hash(request.password)

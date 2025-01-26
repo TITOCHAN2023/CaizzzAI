@@ -24,3 +24,4 @@ openpyxl
 langchain-ollama
 podcastfy
 git+ssh://git@github.com/openai/swarm.git
+pyotp

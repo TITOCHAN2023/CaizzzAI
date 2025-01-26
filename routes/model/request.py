@@ -9,12 +9,14 @@ class CreateSessionRequest(BaseModel):
 class ResetUserRequest(BaseModel):
     originUsername: str
     username: str
-    originPassword:str
+    originPassword:str = None
     password: str
     avatar: str = None
+    otp: str = None
 
 
 class RegisterRequest(BaseModel):
+    otp: str
     username: str
     password: str
     avatar: str = None
