@@ -5,10 +5,10 @@ from langchain_openai.chat_models import ChatOpenAI
 from logger import logger
 from env import OPENAI_BASE_URL,OPENAI_LLM_MODEL,DEEPSEEK_BASE_URL,DEEPSEEK_API_KEY,DEEPSEEK_MODEL
 
-def init_llm( base_url: str, api_key: str, temperature: str,llm_name: str=DEEPSEEK_MODEL, **kwargs):
+def init_llm(llm_name: str, base_url: str, api_key: str, temperature: str, **kwargs):
     """Init LLM."""
-    if not isinstance(llm_name, str):
-        llm_name = str(llm_name)
+    if llm_name == "":
+        llm_name = DEEPSEEK_MODEL
     '''openai'''
     if llm_name.startswith("gpt"):
 
