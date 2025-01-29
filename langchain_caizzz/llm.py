@@ -5,11 +5,11 @@ from langchain_openai.chat_models import ChatOpenAI
 from logger import logger
 from env import OPENAI_BASE_URL,OPENAI_LLM_MODEL,DEEPSEEK_BASE_URL,DEEPSEEK_API_KEY,DEEPSEEK_MODEL
 
-def init_llm(llm_name: str, base_url: str, api_key: str, temperature: str, llm_class: str = "deepseek", **kwargs):
+def init_llm( base_url: str, api_key: str, temperature: str,llm_name: str=DEEPSEEK_MODEL, **kwargs):
     """Init LLM."""
 
     '''openai'''
-    if llm_class == "openai":
+    if llm_name.startswith("gpt"):
 
         kwargs.update({"verbose": True, "streaming": True})
         if base_url=="":
@@ -28,7 +28,7 @@ def init_llm(llm_name: str, base_url: str, api_key: str, temperature: str, llm_c
         )
 
     '''deepseek'''
-    if llm_class == "deepseek":
+    if llm_name.startswith("deepseek"):
 
         kwargs.update({"verbose": True, "streaming": True})
         base_url=DEEPSEEK_BASE_URL
@@ -46,7 +46,7 @@ def init_llm(llm_name: str, base_url: str, api_key: str, temperature: str, llm_c
         )
 
     '''ollama'''
-    if llm_class == "ollama":
+    if llm_name.startswith("ollama"):
 
         if base_url=="":
             base_url="127.0.0.1:11434"

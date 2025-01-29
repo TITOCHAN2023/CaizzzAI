@@ -281,8 +281,11 @@ async def post_user_message(sessionname: str, req : ChatRequest, request:Request
     uid,_=info
     logger.info(f"uid:{uid},sessionname:{sessionname},message:{req}")
 
-    user_api_key = r.get(f"{uid}{sessionname}user_api_key") if req.api_key == "" else req.api_key
-    user_base_url = r.get(f"{uid}{sessionname}user_base_url") if req.base_url == "" else req.base_url
+    # user_api_key = r.get(f"{uid}{sessionname}user_api_key") if req.api_key == "" else req.api_key
+    # user_base_url = r.get(f"{uid}{sessionname}user_base_url") if req.base_url == "" else req.base_url
+
+    user_api_key =req.api_key
+    user_base_url = req.base_url
 
     client_ip  = request.client.host
 
