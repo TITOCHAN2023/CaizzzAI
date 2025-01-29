@@ -7,7 +7,8 @@ from env import OPENAI_BASE_URL,OPENAI_LLM_MODEL,DEEPSEEK_BASE_URL,DEEPSEEK_API_
 
 def init_llm( base_url: str, api_key: str, temperature: str,llm_name: str=DEEPSEEK_MODEL, **kwargs):
     """Init LLM."""
-
+    if not isinstance(llm_name, str):
+        llm_name = str(llm_name)
     '''openai'''
     if llm_name.startswith("gpt"):
 
