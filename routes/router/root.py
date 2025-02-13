@@ -3,13 +3,14 @@ from middleware.jwt import encode_token
 from middleware.otp import generate_otp, verify_otp
 from middleware.mysql import session
 from middleware.mysql.models import UserSchema,ApiKeySchema
+from middleware.hash.hash import hash_string
 from ..model.response import StandardResponse
 from ..model.request import LoginRequest, RegisterRequest,ResetUserRequest
 from datetime import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
 from logger import logger
-from env import OTP_SECRET
-
+from env import OTP_SECRET,API_KEY_HOST,API_KEY_ROOT_AUTH,FREE_USAGE
+import requests
 
 
 root_router = APIRouter(prefix="/root", tags=["root"])
@@ -56,7 +57,55 @@ def login(request: LoginRequest):
         conn.commit()
     
     logger.info(token)
-    return {"token": "Bearer "+token,"avatar":user.avatar}
+
+    auth=""
+ 
+    responseLogin=requests.post(API_KEY_HOST+"/api/login",json={"username":request.username,"password":"chatnio123456!@#"})
+    response1json=responseLogin.json()
+
+    if response1json["status"]==False:
+
+        responseRisgister=requests.post(API_KEY_HOST+"/api/register",json={"username":request.username,"password":"chatnio123456!@#","repassword":"chatnio123456!@#","email":hash_string(request.username+request.password)+"@titochan.top","code":""})
+        response2json=responseRisgister.json()
+
+        if response2json["status"]==True:
+            auth=response2json["token"]
+
+            responseUserList = requests.get(
+                f"{API_KEY_HOST}/api/admin/user/list?page=0&search={request.username}",
+                headers={
+                "sec-ch-ua-platform": "macOS",
+                "Authorization": f"{API_KEY_ROOT_AUTH}",
+                "Referer": f"{API_KEY_HOST}/admin/users",
+                }
+            )
+            responseUserListJson = responseUserList.json()
+            Id = responseUserListJson["data"][0]["id"]
+            responseQuota = requests.post(
+                f"{API_KEY_HOST}/api/admin/user/quota",
+                headers={
+                "Authorization": f"{API_KEY_ROOT_AUTH}",
+                "Referer": f"{API_KEY_HOST}/admin/users",
+                "Content-Type": "application/json"
+                },
+                json={"id":Id,"quota":int(FREE_USAGE),"override":False}
+            )
+            responseQuotaJson = responseQuota.json()
+            logger.info(responseQuotaJson)
+    else:
+        auth=response1json["token"]
+    
+    if auth=="":
+        auth="账号出现问题 请联系管理员"
+    else:
+        responseApikey=requests.get(API_KEY_HOST+"/api/apikey",headers={"Authorization":auth})
+        response1json=responseApikey.json()
+        if response1json["status"]==False:
+            auth="账号出现问题 请联系管理员"
+        else:
+            auth=response1json["key"]
+
+    return {"token": "Bearer "+token,"avatar":user.avatar,"key":auth}
 
 
 @root_router.post("/register")
