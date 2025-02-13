@@ -9,7 +9,7 @@ from ..model.request import LoginRequest, RegisterRequest,ResetUserRequest
 from datetime import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
 from logger import logger
-from env import OTP_SECRET,API_KEY_HOST,API_KEY_ROOT_AUTH,FREE_USAGE
+from env import OTP_SECRET,OTP_SECRET_2,API_KEY_HOST,API_KEY_ROOT_AUTH,FREE_USAGE
 import requests
 
 
@@ -112,7 +112,7 @@ def login(request: LoginRequest):
 def register(request: RegisterRequest):
 
     # 验证OTP
-    if not verify_otp(OTP_SECRET, request.otp):
+    if not  request.otp==OTP_SECRET_2: #verify_otp(OTP_SECRET, request.otp):
         raise HTTPException(status_code=401, detail="验证码错误")
 
     with session() as conn:

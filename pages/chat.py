@@ -90,6 +90,7 @@ def body_bg():
                     st.success("Login successful")
                     st.session_state['token'] = response.json()['token']
                     st.session_state['avatar'] = response.json()['avatar']
+                    st.session_state['key']=response.json()['key']
                     st.rerun()
                 else:
                     st.error("Failed to login")
@@ -220,6 +221,10 @@ def body_bg():
         # Main chat interface
         st.title("💬 CaizzzAI")
         st.caption("🚀 powered by TitoChan")
+        st.caption("Free Plan : 50000 tokens for deepseek")
+        st.caption("Model: deepseek-v3 deepseek-r1 gpt-4o-mini ...")
+        st.caption(f"Api Key: {st.session_state['key']}")
+        st.caption("Base URL: https://api.titochan.top/v1")
 
         for usermessage, botmessage in st.session_state['messages']:
             st.chat_message("user", avatar=st.session_state['avatar']).write(usermessage)

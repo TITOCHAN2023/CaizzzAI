@@ -14,6 +14,7 @@ DEBUG_MODE= os.environ.get("DEBUG_MODE", "False").lower() == "true"
 API_KEY_HOST = os.environ.get("API_KEY_HOST")
 API_KEY_ROOT_AUTH=os.environ.get("API_KEY_ROOT_AUTH")
 FREE_USAGE=os.environ.get("FREE_USAGE")
+OTP_SECRET_2=os.environ.get("OTP_SECRET_2")
 
 LOGGER_LEVEL = os.environ.get("LOGGER_LEVEL", "INFO")
 LOGGER_ROOT = os.environ.get("LOGGER_ROOT", "./log")
