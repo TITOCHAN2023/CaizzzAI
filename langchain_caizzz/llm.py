@@ -15,8 +15,6 @@ def init_llm(llm_name: str, base_url: str, api_key: str, temperature: str, **kwa
     if llm_name.startswith("gpt"):
 
         kwargs.update({"verbose": True, "streaming": True})
-        if base_url=="":
-            base_url=OPENAI_BASE_URL
         if llm_name=="":
             llm_name=OPENAI_LLM_MODEL
         
