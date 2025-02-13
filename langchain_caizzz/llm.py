@@ -3,12 +3,14 @@ from typing import Dict
 from langchain_ollama  import ChatOllama
 from langchain_openai.chat_models import ChatOpenAI
 from logger import logger
-from env import OPENAI_BASE_URL,OPENAI_LLM_MODEL,DEEPSEEK_BASE_URL,DEEPSEEK_API_KEY,DEEPSEEK_MODEL
+from env import OPENAI_BASE_URL,OPENAI_LLM_MODEL,DEEPSEEK_BASE_URL,DEEPSEEK_API_KEY,DEEPSEEK_MODEL,API_KEY_HOST
 
 def init_llm(llm_name: str, base_url: str, api_key: str, temperature: str, **kwargs):
     """Init LLM."""
     if llm_name == "":
         llm_name = DEEPSEEK_MODEL
+    if "https://api.titochan.top" in base_url:
+        base_url.replace("https://api.titochan.top", API_KEY_HOST)
     '''openai'''
     if llm_name.startswith("gpt"):
 
