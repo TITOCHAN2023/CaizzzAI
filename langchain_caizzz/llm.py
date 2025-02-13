@@ -15,8 +15,6 @@ def init_llm(llm_name: str, base_url: str, api_key: str, temperature: str, **kwa
     if llm_name.startswith("gpt"):
 
         kwargs.update({"verbose": True, "streaming": True})
-        if llm_name=="":
-            llm_name=OPENAI_LLM_MODEL
         
         logger.info(f"Init OpenAI LLM: {llm_name},base_url:{base_url},api_key:{api_key},temperature:{temperature}")
 
@@ -32,9 +30,6 @@ def init_llm(llm_name: str, base_url: str, api_key: str, temperature: str, **kwa
     if llm_name.startswith("deepseek"):
 
         kwargs.update({"verbose": True, "streaming": True})
-        base_url=DEEPSEEK_BASE_URL
-        llm_name=DEEPSEEK_MODEL
-        api_key=DEEPSEEK_API_KEY
         
         logger.info(f"Init deepseek LLM: {llm_name},base_url:{base_url},api_key:{api_key},temperature:{temperature}")
 
