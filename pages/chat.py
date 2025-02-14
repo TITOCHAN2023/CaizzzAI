@@ -143,9 +143,6 @@ def body_bg():
                 st.session_state['messages'] = []
                 for item in history:
                     st.session_state['messages'].append((item['usermessage'], item['botmessage']))
-                    st.session_state['api_key'] = item['user_api_key']
-                    st.session_state['base_url'] = item['user_base_url']
-                    st.session_state['llm_model'] = item['llm_model']
             else:
                 st.error("Could not find 'history' in response")
         else:
@@ -154,9 +151,9 @@ def body_bg():
         # Sidebar inputs
         st.sidebar.header("Settings")
         st.sidebar.write("Left blank is the default value")
-        st.session_state['llm_model'] = st.sidebar.text_input("LLM Model:", key="llm_model_input")
-        st.session_state['api_key'] = st.sidebar.text_input("API Key:", key="api_key_input")
-        st.session_state['base_url'] = st.sidebar.text_input("Base URL:", key="base_url_input")
+        st.session_state['llm_model'] = st.sidebar.text_input("LLM Model:", key="llm_model_input",value="gpt-4o-mini")
+        st.session_state['api_key'] = st.sidebar.text_input("API Key:", key="api_key_input",value=st.session_state['key'])
+        st.session_state['base_url'] = st.sidebar.text_input("Base URL:", key="base_url_input",value="https://api.titochan.top/v1")
         st.session_state['temp_input'] = st.sidebar.slider("Temperature", min_value=0.0, max_value=1.0, value=0.7, step=0.05)
 
         vdb_on = st.sidebar.toggle("Knowledge Base", False)
