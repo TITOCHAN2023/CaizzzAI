@@ -47,7 +47,7 @@ async def generate_audio(req:TTSRequest, info: Tuple[int, int] = Depends(jwt_aut
                 code=0,
                 status="success",
                 message="audio",
-                data={"audio_url": str(audio_position)},
+                data={"audio_url": str(audio_position).split("'")[1]},
             )
         
     tts_class = req.tts_class.upper()
