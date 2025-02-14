@@ -83,6 +83,7 @@ def body_bg():
             password = st.text_input("Password", type="password")
             submitted = st.form_submit_button("Login")
             if submitted:
+                st.session_state['username']=username
                 login_url = f"http://{_IP}:{_PORT}/root/login"
                 payload = {"username": username, "password": password}
                 response = requests.post(login_url, json=payload)
@@ -91,6 +92,7 @@ def body_bg():
                     st.session_state['token'] = response.json()['token']
                     st.session_state['avatar'] = response.json()['avatar']
                     st.session_state['key']=response.json()['key']
+                    st.session_state['uid']=response.json()['uid']
                     st.rerun()
                 else:
                     st.error("Failed to login")

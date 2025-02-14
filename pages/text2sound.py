@@ -63,7 +63,7 @@ def siderbar():
 
     if st.sidebar.button("upload"):
         with session() as conn:
-            is_admin = conn.query().filter(UserSchema.username == st.session_state['username']).first().is_admin
+            is_admin = conn.query().filter(UserSchema.uid == st.session_state['uid']).first().is_admin
             if not is_admin:
                 st.sidebar.warning("with no qualification, you can't upload voice")
                 st.rerun()
