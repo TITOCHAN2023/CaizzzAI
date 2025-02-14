@@ -106,14 +106,13 @@ def body_bg():
         if response.status_code == 200:
             sessions = response.json()['data']['session_list']
             if sessions==[]:
-                if st.sidebar.button("Create Session"):
-                    create_session_url = f"http://{_IP}:{_PORT}/v1/session"
-                    payload = {"sessionname": "default session"}
-                    response = requests.post(create_session_url, headers=headers, json=payload)
-                    if response.status_code == 200:
-                        st.rerun()
-                    else:
-                        st.error("Failed to create session")
+                create_session_url = f"http://{_IP}:{_PORT}/v1/session"
+                payload = {"sessionname": "default session"}
+                response = requests.post(create_session_url, headers=headers, json=payload)
+                if response.status_code == 200:
+                    st.rerun()
+                else:
+                    st.error("Failed to create session")
             session_names = [session['sessionname'] for session in sessions]
             st.session_state['sessionname'] = st.sidebar.selectbox("Select Session", session_names)
         else:
