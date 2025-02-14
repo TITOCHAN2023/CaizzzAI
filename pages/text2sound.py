@@ -74,6 +74,8 @@ def siderbar():
             if response.status_code == 200:
                 st.sidebar.success(response.json()["message"])
         else:
+            if not st.session_state['admin']:
+                st.warning("You are not Qualified to upload,please ASK ADMIN FOR QUALIFICATION") 
             st.write("Please add a file first")
 
     
