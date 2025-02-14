@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
-
+from middleware.mysql.models.users import UserSchema
+from middleware.mysql import session
 import streamlit.components.v1 as components
 from dotenv import load_dotenv
 import os
@@ -58,7 +59,14 @@ def siderbar():
     uploaded_file = st.sidebar.file_uploader("choose ur own voice (5s-15s)", type=[".mp3", ".wav"])
     voice_name = st.sidebar.text_input("voice name (make it as a password)", key="voice_name")
     
+    
+
     if st.sidebar.button("upload"):
+        with session() as conn:
+            is_admin = conn.query().filter(UserSchema.username == st.session_state['username']).first().is_admin
+            if not is_admin:
+                st.sidebar.warning("with no qualification, you can't upload voice")
+                st.rerun()
         if uploaded_file is not None:
             st.write(f"uploading {uploaded_file.name}  as {voice_name}")
             files = {"files": (uploaded_file.name, uploaded_file.getvalue(), uploaded_file.type)}
