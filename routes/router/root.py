@@ -29,6 +29,7 @@ async def root() -> StandardResponse:
 
 @root_router.post("/login")
 def login(request: LoginRequest):
+    is_admin=False
     # 从数据库查询用户
     with session() as conn:
         user = conn.query(UserSchema).filter(UserSchema.username == request.username).first()
@@ -39,7 +40,7 @@ def login(request: LoginRequest):
     # 验证密码
     if not check_password_hash(user.password_hash, request.password):
         raise HTTPException(status_code=401, detail="密码错误")
-    
+    is_admin=user.is_admin
     # 更新最后登录时间
     with session() as conn:
         user.last_login = datetime.now()
@@ -105,7 +106,7 @@ def login(request: LoginRequest):
         else:
             auth=response1json["key"]
 
-    return {"token": "Bearer "+token,"avatar":user.avatar,"key":auth,"isadmin":user.is_admin}
+    return {"token": "Bearer "+token,"avatar":user.avatar,"key":auth,"isadmin":is_admin}
 
 
 @root_router.post("/register")
