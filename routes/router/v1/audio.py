@@ -38,15 +38,6 @@ async def generate_audio(req:TTSRequest, info: Tuple[int, int] = Depends(jwt_aut
             data={"audio_url": tts_url},
         )
     with session() as conn:
-        is_admin = conn.query().filter(UserSchema.uid == uid).first().is_admin
-        if not is_admin:
-            return StandardResponse(
-                code=0,
-                status="fail",
-                message="ask admin for audio qualification",
-                data={}
-            )
-
         audio_position = conn.query(audioPositionSchema.audio_position).filter(audioPositionSchema.uid == uid,audioPositionSchema.audio_content==req.voicename+req.content).first()
         if audio_position:
             return StandardResponse(
