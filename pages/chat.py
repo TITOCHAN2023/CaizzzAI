@@ -92,7 +92,7 @@ def body_bg():
                     st.session_state['token'] = response.json()['token']
                     st.session_state['avatar'] = response.json()['avatar']
                     st.session_state['key']=response.json()['key']
-                    st.session_state['uid']=response.json()['uid']
+                    st.session_state['isadmin']=response.json()['admin']
                     st.rerun()
                 else:
                     st.error("Failed to login")

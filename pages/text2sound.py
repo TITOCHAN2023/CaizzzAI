@@ -62,12 +62,8 @@ def siderbar():
     
 
     if st.sidebar.button("upload"):
-        with session() as conn:
-            is_admin = conn.query().filter(UserSchema.uid == st.session_state['uid']).first().is_admin
-            if not is_admin:
-                st.sidebar.warning("with no qualification, you can't upload voice")
-                st.rerun()
-        if uploaded_file is not None:
+
+        if uploaded_file is not None and st.session_state['admin'] == 1:
             st.write(f"uploading {uploaded_file.name}  as {voice_name}")
             files = {"files": (uploaded_file.name, uploaded_file.getvalue(), uploaded_file.type)}
             
