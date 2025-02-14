@@ -171,6 +171,14 @@ def body_bg():
             response = requests.get(get_vdb_url, headers=headers)
             if response.status_code == 200:
                 vdb_list = response.json()['data']['vdb_list']
+                if vdb_list == []:
+                    create_vdb_url = f"http://{_IP}:{_PORT}/v1/vdb"
+                    payload = {"name": "default knowledge base"}
+                    response = requests.post(create_vdb_url, headers=headers, json=payload)
+                    if response.status_code == 200:
+                        st.rerun()
+                    else:
+                        st.error("Failed to create knowledge base")
                 vdb_names = [vdb['name'] for vdb in vdb_list]
                 st.session_state['vdb_name'] = st.sidebar.selectbox("Select a Knowledge Base", vdb_names)
             else:
