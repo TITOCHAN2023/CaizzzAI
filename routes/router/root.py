@@ -106,7 +106,7 @@ def login(request: LoginRequest):
         else:
             auth=response1json["key"]
 
-    return {"token": "Bearer "+token,"avatar":user.avatar,"key":auth,"isadmin":is_admin}
+    return {"token": token,"avatar":user.avatar,"key":auth,"isadmin":is_admin}
 
 
 @root_router.post("/register")

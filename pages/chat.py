@@ -89,7 +89,7 @@ def body_bg():
                 response = requests.post(login_url, json=payload)
                 if response.status_code == 200:
                     st.success("Login successful")
-                    st.session_state['token'] = response.json()['token']
+                    st.session_state['token'] = "Bearer "+response.json()['token']
                     st.session_state['avatar'] = response.json()['avatar']
                     st.session_state['key']=response.json()['key']
                     st.session_state['admin']=response.json()['isadmin']
