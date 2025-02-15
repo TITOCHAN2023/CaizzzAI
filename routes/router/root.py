@@ -5,7 +5,7 @@ from middleware.mysql import session
 from middleware.mysql.models import UserSchema,ApiKeySchema
 from middleware.hash.hash import hash_string
 from ..model.response import StandardResponse
-from ..model.request import LoginRequest, RegisterRequest,ResetUserRequest
+from ..model.request import LoginRequest, RegisterRequest,ResetUserRequest, WXRegisterRequest
 from datetime import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
 from logger import logger
@@ -140,6 +140,45 @@ def register(request: RegisterRequest):
 
     return {"message": "注册成功"}
 
+
+@root_router.post("/wxlogin&register")
+def wxregister(request: WXRegisterRequest):
+    # 验证微信登录
+    response=requests.get(f"https://api.weixin.qq.com/wxa/checksession?access_token={request.access_token}&signature={request.signature}&openid={request.openid}&sig_method={request.sig_method}")
+    responseJson=response.json()
+    if responseJson["errcode"]!=0:
+        raise HTTPException(status_code=401, detail="微信登录失败")
+    
+    with session() as conn:
+        # 检查用户是否存在 存在则登录 不存在则注册
+        user = conn.query(UserSchema).filter(UserSchema.username == request.openid).first()
+        if not user:
+            # 创建新用户
+            new_user = UserSchema(
+                username=request.openid,
+                password_hash=generate_password_hash(request.openid),
+                avatar="☕️",
+                create_at=datetime.now(),
+                is_admin=False  # 默认非管理员
+            )
+            conn.add(new_user)
+            conn.commit()
+            user = conn.query(UserSchema).filter(UserSchema.username == request.openid).first()
+        # 更新最后登录时间
+        user.last_login = datetime.now()
+        conn.commit()
+        # 生成 JWT 令牌
+        token = encode_token(uid=user.uid, level=int(user.is_admin))
+        with session() as conn:
+            api_key=conn.query(ApiKeySchema).filter(ApiKeySchema.uid==user.uid).first()
+            if not api_key:
+                api_key = ApiKeySchema(uid=user.uid, api_key_secret=token)
+                conn.add(api_key)
+            else:
+                api_key.api_key_secret = token
+            conn.commit()
+
+    return {"token": token,"avatar":user.avatar,"key":token,"isadmin":False}
 
 
 @root_router.post("/reset_user")

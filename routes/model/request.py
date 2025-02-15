@@ -20,6 +20,13 @@ class RegisterRequest(BaseModel):
     username: str
     password: str
     avatar: str = None
+
+
+class WXRegisterRequest(BaseModel):
+    access_token: str
+    signature: str
+    openid: str
+    sig_method: str
     
 class LoginRequest(BaseModel):
     username: str
