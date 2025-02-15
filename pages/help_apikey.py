@@ -53,7 +53,7 @@ def body():
     # Main chat interface
     st.title("💬 CaizzzAI")
     st.caption("🚀 powered by TitoChan")
-    st.caption("Free Plan : 50000 tokens for deepseek")
+    st.caption(f"Quota : {st.session_state['quota']}")
     st.caption("Model: deepseek-v3 deepseek-r1 gpt-4o-mini ...")
     st.caption(f"Your Api Key: {st.session_state['key'] if 'key' in st.session_state.keys() else 'login in chat page first'}")
     st.caption("Base URL: https://api.titochan.top/v1")

@@ -15,6 +15,7 @@ allowed_extensions = [".txt", ".pdf", ".docx", ".xlsx",".htm","html"]
 
 _IP = os.environ.get("API_HOST")
 _PORT = os.environ.get("API_PORT")
+API_KEY_HOST = os.environ.get("API_KEY_HOST")
 server_url = f"http://{_IP}:{_PORT}"
 ABOUT = """\
 ### CaizzzAI is a project of providing private llm api and webui service
@@ -98,6 +99,14 @@ def body_bg():
                     st.error("Failed to login")
     else:
         headers = {"Authorization": st.session_state['token']}
+        quota_url = f"{API_KEY_HOST}/api/quota"
+        quota_response = requests.get(quota_url, headers={"Authorization": "Bearer "+st.session_state['key']})
+        if quota_response.status_code == 200:
+            quota_data = quota_response.json()
+            st.session_state['quota'] = quota_data['quota']
+        else:
+            st.session_state['quota'] = "Failed to fetch quota"
+            st.sidebar.warning("Failed to fetch quota")
         st.sidebar.header("CaizzzAI")
         st.sidebar.write("ONLY FOR TEST not open yet")
         st.sidebar.write("Select a session to continue")
@@ -236,7 +245,7 @@ def body_bg():
         # Main chat interface
         st.title("💬 CaizzzAI")
         st.caption("🚀 powered by TitoChan")
-        st.caption("Free Plan : 50000 tokens for deepseek")
+        st.caption(f"Quota : {st.session_state['quota']}")
         st.caption("Model: deepseek-v3 deepseek-r1 gpt-4o-mini ...")
         st.caption(f"Your Api Key: {st.session_state['key']}")
         st.caption("Base URL: https://api.titochan.top/v1")
