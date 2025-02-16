@@ -146,9 +146,10 @@ def wxlogin(request: WXRegisterRequest):
     # 验证微信登录
     response=requests.get(f"https://api.weixin.qq.com/sns/jscode2session?appid={WX_APPID}&secret={WX_APPSECRET}&js_code={request.js_code}&grant_type=authorization_code")
     responseJson=response.json()
-    if responseJson["errcode"]!=0:
-        logger.error(responseJson)
-        raise HTTPException(status_code=401, detail="微信登录失败")
+    if "errcode" in responseJson:
+        if responseJson["errcode"]!=0:
+            logger.error(responseJson)
+            raise HTTPException(status_code=401, detail="微信登录失败")
     
     with session() as conn:
         # 检查用户是否存在 存在则登录 不存在则注册
