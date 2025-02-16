@@ -9,7 +9,7 @@ from ..model.request import LoginRequest, RegisterRequest,ResetUserRequest, WXRe
 from datetime import datetime
 from werkzeug.security import check_password_hash, generate_password_hash
 from logger import logger
-from env import OTP_SECRET,OTP_SECRET_2,API_KEY_HOST,API_KEY_ROOT_AUTH,FREE_USAGE
+from env import OTP_SECRET,OTP_SECRET_2,API_KEY_HOST,API_KEY_ROOT_AUTH,FREE_USAGE,WX_APPID,WX_APPSECRET
 import requests
 
 
@@ -141,29 +141,30 @@ def register(request: RegisterRequest):
     return {"message": "注册成功"}
 
 
-@root_router.post("/wxlogin&register")
-def wxregister(request: WXRegisterRequest):
+@root_router.post("/wxlogin")
+def wxlogin(request: WXRegisterRequest):
     # 验证微信登录
-    response=requests.get(f"https://api.weixin.qq.com/wxa/checksession?access_token={request.access_token}&signature={request.signature}&openid={request.openid}&sig_method={request.sig_method}")
+    response=requests.get(f"https://api.weixin.qq.com/sns/jscode2session?appid={WX_APPID}&secret={WX_APPSECRET}&js_code={request.js_code}&grant_type=authorization_code")
     responseJson=response.json()
     if responseJson["errcode"]!=0:
+        logger.error(responseJson)
         raise HTTPException(status_code=401, detail="微信登录失败")
     
     with session() as conn:
         # 检查用户是否存在 存在则登录 不存在则注册
-        user = conn.query(UserSchema).filter(UserSchema.username == request.openid).first()
+        user = conn.query(UserSchema).filter(UserSchema.username == responseJson['openid']).first()
         if not user:
             # 创建新用户
             new_user = UserSchema(
-                username=request.openid,
-                password_hash=generate_password_hash(request.openid),
+                username=responseJson['openid'],
+                password_hash=generate_password_hash(responseJson['openid']),
                 avatar="☕️",
                 create_at=datetime.now(),
                 is_admin=False  # 默认非管理员
             )
             conn.add(new_user)
             conn.commit()
-            user = conn.query(UserSchema).filter(UserSchema.username == request.openid).first()
+            user = conn.query(UserSchema).filter(UserSchema.username == responseJson['openid']).first()
         # 更新最后登录时间
         user.last_login = datetime.now()
         conn.commit()

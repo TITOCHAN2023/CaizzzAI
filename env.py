@@ -15,6 +15,8 @@ API_KEY_HOST = os.environ.get("API_KEY_HOST")
 API_KEY_ROOT_AUTH=os.environ.get("API_KEY_ROOT_AUTH")
 FREE_USAGE=os.environ.get("FREE_USAGE")
 OTP_SECRET_2=os.environ.get("OTP_SECRET_2")
+WX_APPID=os.environ.get("WX_APPID")
+WX_APPSECRET=os.environ.get("WX_APPSECRET")
 
 LOGGER_LEVEL = os.environ.get("LOGGER_LEVEL", "INFO")
 LOGGER_ROOT = os.environ.get("LOGGER_ROOT", "./log")
