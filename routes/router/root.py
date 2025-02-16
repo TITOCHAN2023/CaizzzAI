@@ -1,3 +1,4 @@
+import base64
 from fastapi import APIRouter, HTTPException
 from middleware.jwt import encode_token
 from middleware.otp import generate_otp, verify_otp
@@ -150,7 +151,8 @@ def wxlogin(request: WXRegisterRequest):
         if responseJson["errcode"]!=0:
             logger.error(responseJson)
             raise HTTPException(status_code=401, detail="微信登录失败")
-    
+    encoded = base64.b64encode(responseJson['openid'].encode()).decode()
+    responseJson['openid']=encoded[:24]
     with session() as conn:
         # 检查用户是否存在 存在则登录 不存在则注册
         user = conn.query(UserSchema).filter(UserSchema.username == responseJson['openid']).first()
