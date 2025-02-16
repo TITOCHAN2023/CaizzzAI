@@ -169,18 +169,11 @@ def wxlogin(request: WXRegisterRequest):
         # 更新最后登录时间
         user.last_login = datetime.now()
         conn.commit()
-        # 生成 JWT 令牌
-        token = encode_token(uid=user.uid, level=int(user.is_admin))
-        with session() as conn:
-            api_key=conn.query(ApiKeySchema).filter(ApiKeySchema.uid==user.uid).first()
-            if not api_key:
-                api_key = ApiKeySchema(uid=user.uid, api_key_secret=token)
-                conn.add(api_key)
-            else:
-                api_key.api_key_secret = token
-            conn.commit()
+        
+    response=login(request=LoginRequest(username=responseJson['openid'],password=responseJson['openid']))
 
-    return {"token": token,"avatar":user.avatar,"key":token,"isadmin":False}
+
+    return response
 
 
 @root_router.post("/reset_user")
