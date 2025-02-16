@@ -138,7 +138,7 @@ def register(request: RegisterRequest):
         
         
 
-    return {"message": "注册成功"}
+    return {"status": "ok"}
 
 
 @root_router.post("/wxlogin")
@@ -155,20 +155,9 @@ def wxlogin(request: WXRegisterRequest):
         # 检查用户是否存在 存在则登录 不存在则注册
         user = conn.query(UserSchema).filter(UserSchema.username == responseJson['openid']).first()
         if not user:
-            # 创建新用户
-            new_user = UserSchema(
-                username=responseJson['openid'],
-                password_hash=generate_password_hash(responseJson['openid']),
-                avatar="☕️",
-                create_at=datetime.now(),
-                is_admin=False  # 默认非管理员
-            )
-            conn.add(new_user)
-            conn.commit()
-            user = conn.query(UserSchema).filter(UserSchema.username == responseJson['openid']).first()
-        # 更新最后登录时间
-        user.last_login = datetime.now()
-        conn.commit()
+            response=register(request=RegisterRequest(otp=OTP_SECRET_2,username=responseJson['openid'],password=responseJson['openid']))
+            if response["status"]!="ok":
+                raise HTTPException(status_code=401, detail="注册失败")
         
     response=login(request=LoginRequest(username=responseJson['openid'],password=responseJson['openid']))
 
