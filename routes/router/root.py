@@ -130,7 +130,7 @@ def register(request: RegisterRequest):
         new_user = UserSchema(
             username=request.username,
             password_hash=password_hash,
-            avatar=request.avatar,
+            avatar=request.avatar if request.avatar else "https://titochan.top/gpt/media/2fbc381a43bd4195db06ff448f8cf9679fec08fcdc9c4358d51e6061.png",
             create_at=datetime.now(),
             is_admin=False  # 默认非管理员
         )
